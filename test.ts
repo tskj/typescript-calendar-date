@@ -1,8 +1,13 @@
 import {
   addCalendarDays,
   addCalendarMonths,
+  binarySearch,
   calendarDateEqual,
   calendarDateLessThan,
+  dayOfWeek,
+  differenceInCalendarDays,
+  differenceInCalendarMonths,
+  exponentialSearch,
 } from './calendar-date';
 
 console.log(addCalendarMonths({ year: 2020, month: 'jan' }, -18));
@@ -73,3 +78,26 @@ console.log(
     { year: 2020, month: 'feb', day: 2 }
   )
 );
+
+console.log(
+  differenceInCalendarDays(
+    { year: 2019, month: 'jan', day: 3 },
+    { year: 2020, month: 'oct', day: 30 }
+  )
+);
+
+console.log(
+  differenceInCalendarDays(
+    { year: 1980, month: 'jan', day: 3 },
+    { year: 2020, month: 'oct', day: 30 }
+  )
+);
+
+console.log(
+  differenceInCalendarDays(
+    { year: 2020, month: 'oct', day: 30 },
+    { year: 1980, month: 'jan', day: 3 }
+  )
+);
+
+console.log(dayOfWeek({ year: 1988, month: 'jan', day: 6 }));

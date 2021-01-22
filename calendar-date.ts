@@ -1,4 +1,12 @@
-import { Day, Month, monthName, monthNumber, Year } from './consts';
+import {
+  Day,
+  Month,
+  monthName,
+  monthNumber,
+  WeekDay,
+  weekDays,
+  Year,
+} from './consts';
 import { mod } from './utils';
 
 type CalendarYear = { year: Year };
@@ -117,10 +125,78 @@ export const calendarDateLessThan = (a: CalendarDate, b: CalendarDate) => {
 export const calendarDateEqual = (a: CalendarDate, b: CalendarDate) =>
   !calendarDateLessThan(a, b) && !calendarDateLessThan(b, a);
 
-// difference in months
-// difference in days
+export const exponentialSearch = (
+  pred: (n: number) => boolean
+): [number, number] => {
+  const atZero = pred(0);
+  let n = 1;
+  while (true) {
+    if (pred(n) !== atZero) {
+      break;
+    }
+    if (pred(-n) !== atZero) {
+      n *= -1;
+      break;
+    }
+    n *= 2;
+  }
+  if (n < 0) {
+    return [n, 0];
+  } else {
+    return [0, n];
+  }
+};
 
-// day of week
+export const binarySearch = (
+  pred: (n: number) => boolean,
+  [start, end]: [number, number]
+): number => {
+  if (pred(end)) {
+    return end;
+  }
+
+  const middle = Math.floor((start + end) / 2);
+  const atMiddle = pred(middle);
+
+  if (atMiddle) {
+    return binarySearch(pred, [middle, end - 1]);
+  } else {
+    return binarySearch(pred, [start, middle - 1]);
+  }
+};
+
+const solve = (pred: (n: number) => boolean): number => {
+  const range = exponentialSearch(pred);
+  return binarySearch(pred, range);
+};
+
+export const differenceInCalendarMonths = (
+  a: CalendarMonth,
+  b: CalendarMonth
+): number => {
+  const lteq = (a: CalendarMonth, b: CalendarMonth) =>
+    calendarDateLessThan({ ...a, day: 1 }, { ...b, day: 1 }) ||
+    calendarDateEqual({ ...a, day: 1 }, { ...b, day: 1 });
+  const n = solve((n) => lteq(addCalendarMonths(a, n), b));
+  return n;
+};
+
+export const differenceInCalendarDays = (
+  a: CalendarDate,
+  b: CalendarDate
+): number => {
+  const lteq = (a: CalendarDate, b: CalendarDate) =>
+    calendarDateLessThan(a, b) || calendarDateEqual(a, b);
+  const n = solve((n) => lteq(addCalendarDays(a, n), b));
+  return n;
+};
+
+export const dayOfWeek = ({ year, month, day }: CalendarDate): WeekDay => {
+  // monday
+  const firstOf2021: CalendarDate = { year: 2021, month: 'jan', day: 4 };
+  const diff = differenceInCalendarDays(firstOf2021, { year, month, day });
+  return weekDays[mod(diff, 7)];
+};
 
 // wanna add years? Do it yourself
 // parsing and formating? Do it yourself

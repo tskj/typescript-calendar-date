@@ -1,6 +1,15 @@
 "use strict";
 exports.__esModule = true;
-exports.monthName = exports.monthNumber = void 0;
+exports.monthName = exports.monthNumber = exports.weekDays = void 0;
+exports.weekDays = [
+    'mon',
+    'tue',
+    'wed',
+    'thu',
+    'fri',
+    'sat',
+    'sun',
+];
 exports.monthNumber = function (month) {
     switch (month) {
         case 'jan':

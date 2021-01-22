@@ -31,3 +31,8 @@ console.log(calendar_date_1.calendarDateLessThan({ year: 2020, month: 'feb', day
 console.log(calendar_date_1.calendarDateLessThan({ year: 2020, month: 'feb', day: 1 }, { year: 2020, month: 'jan', day: 2 }));
 console.log(calendar_date_1.calendarDateLessThan({ year: 2019, month: 'feb', day: 1 }, { year: 2020, month: 'jan', day: 2 }));
 console.log(calendar_date_1.calendarDateEqual({ year: 2020, month: 'feb', day: 2 }, { year: 2020, month: 'feb', day: 2 }));
+console.log(calendar_date_1.differenceInCalendarDays({ year: 2019, month: 'jan', day: 3 }, { year: 2020, month: 'oct', day: 30 }));
+console.log(calendar_date_1.differenceInCalendarDays({ year: 1980, month: 'jan', day: 3 }, { year: 2020, month: 'oct', day: 30 }));
+console.log(calendar_date_1.differenceInCalendarDays({ year: 2020, month: 'oct', day: 30 }, { year: 1980, month: 'jan', day: 3 }));
+console.log(calendar_date_1.dayOfWeek({ year: 1988, month: 'jan', day: 6 }));
+console.log(calendar_date_1.differenceInCalendarMonths({ year: 1988, month: 'jan' }, { year: 2021, month: 'jan' }));

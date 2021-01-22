@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-exports.lastDayOfMonth = exports.calendarDateEqual = exports.calendarDateLessThan = exports.addCalendarDays = exports.addCalendarMonths = void 0;
+exports.lastDayOfMonth = exports.dayOfWeek = exports.differenceInCalendarDays = exports.differenceInCalendarMonths = exports.binarySearch = exports.exponentialSearch = exports.calendarDateEqual = exports.calendarDateLessThan = exports.addCalendarDays = exports.addCalendarMonths = void 0;
 var consts_1 = require("./consts");
 var utils_1 = require("./utils");
 var isLeapYear = function (_a) {
@@ -112,9 +112,68 @@ exports.calendarDateLessThan = function (a, b) {
 exports.calendarDateEqual = function (a, b) {
     return !exports.calendarDateLessThan(a, b) && !exports.calendarDateLessThan(b, a);
 };
+exports.exponentialSearch = function (pred) {
+    var atZero = pred(0);
+    var n = 1;
+    while (true) {
+        if (pred(n) !== atZero) {
+            break;
+        }
+        if (pred(-n) !== atZero) {
+            n *= -1;
+            break;
+        }
+        n *= 2;
+    }
+    if (n < 0) {
+        return [n, 0];
+    }
+    else {
+        return [0, n];
+    }
+};
+exports.binarySearch = function (pred, _a) {
+    var start = _a[0], end = _a[1];
+    if (pred(end)) {
+        return end;
+    }
+    var middle = Math.floor((start + end) / 2);
+    var atMiddle = pred(middle);
+    if (atMiddle) {
+        return exports.binarySearch(pred, [middle, end - 1]);
+    }
+    else {
+        return exports.binarySearch(pred, [start, middle - 1]);
+    }
+};
+var solve = function (pred) {
+    var range = exports.exponentialSearch(pred);
+    return exports.binarySearch(pred, range);
+};
+exports.differenceInCalendarMonths = function (a, b) {
+    var lteq = function (a, b) {
+        return exports.calendarDateLessThan(__assign(__assign({}, a), { day: 1 }), __assign(__assign({}, b), { day: 1 })) ||
+            exports.calendarDateEqual(__assign(__assign({}, a), { day: 1 }), __assign(__assign({}, b), { day: 1 }));
+    };
+    var n = solve(function (n) { return lteq(exports.addCalendarMonths(a, n), b); });
+    return n;
+};
+exports.differenceInCalendarDays = function (a, b) {
+    var lteq = function (a, b) {
+        return exports.calendarDateLessThan(a, b) || exports.calendarDateEqual(a, b);
+    };
+    var n = solve(function (n) { return lteq(exports.addCalendarDays(a, n), b); });
+    return n;
+};
+exports.dayOfWeek = function (_a) {
+    var year = _a.year, month = _a.month, day = _a.day;
+    // monday
+    var firstOf2021 = { year: 2021, month: 'jan', day: 4 };
+    var diff = exports.differenceInCalendarDays(firstOf2021, { year: year, month: month, day: day });
+    return consts_1.weekDays[utils_1.mod(diff, 7)];
+};
 // difference in months
 // difference in days
-// order (and therefore equality)
 // day of week
 // wanna add years? Do it yourself
 // parsing and formating? Do it yourself

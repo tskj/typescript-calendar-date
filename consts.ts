@@ -16,6 +16,17 @@ export type Month =
 
 export type Day = number;
 
+export type WeekDay = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+export const weekDays: WeekDay[] = [
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+  'sat',
+  'sun',
+];
+
 export const monthNumber = (month: Month): number => {
   switch (month) {
     case 'jan':
