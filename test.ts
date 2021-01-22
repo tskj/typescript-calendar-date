@@ -101,3 +101,13 @@ console.log(
 );
 
 console.log(dayOfWeek({ year: 1988, month: 'jan', day: 6 }));
+console.log(dayOfWeek({ year: 1995, month: 'dec', day: 14 }));
+
+console.log(addCalendarDays({ year: 2021, month: 'feb', day: 0 }, 0));
+console.log(addCalendarDays({ year: 2021, month: 'jan', day: 32 }, 0));
+console.log(addCalendarDays({ year: 2021, month: 'feb', day: 30 }, 0));
+console.log(addCalendarDays({ year: 2021, month: 'jan', day: 365 }, 0));
+console.log(addCalendarDays({ year: 2020, month: 'jan', day: 366 }, 0));
+console.log(addCalendarDays({ year: 2021, month: 'jan', day: 0 }, 0));
+console.log(addCalendarDays({ year: 2021, month: 'jan', day: -1 }, 0));
+console.log(addCalendarDays({ year: 2022, month: 'jan', day: -365 }, 0));

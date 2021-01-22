@@ -35,4 +35,12 @@ console.log(calendar_date_1.differenceInCalendarDays({ year: 2019, month: 'jan',
 console.log(calendar_date_1.differenceInCalendarDays({ year: 1980, month: 'jan', day: 3 }, { year: 2020, month: 'oct', day: 30 }));
 console.log(calendar_date_1.differenceInCalendarDays({ year: 2020, month: 'oct', day: 30 }, { year: 1980, month: 'jan', day: 3 }));
 console.log(calendar_date_1.dayOfWeek({ year: 1988, month: 'jan', day: 6 }));
-console.log(calendar_date_1.differenceInCalendarMonths({ year: 1988, month: 'jan' }, { year: 2021, month: 'jan' }));
+console.log(calendar_date_1.dayOfWeek({ year: 1995, month: 'dec', day: 14 }));
+console.log(calendar_date_1.addCalendarDays({ year: 2021, month: 'feb', day: 0 }, 0));
+console.log(calendar_date_1.addCalendarDays({ year: 2021, month: 'jan', day: 32 }, 0));
+console.log(calendar_date_1.addCalendarDays({ year: 2021, month: 'feb', day: 30 }, 0));
+console.log(calendar_date_1.addCalendarDays({ year: 2021, month: 'jan', day: 365 }, 0));
+console.log(calendar_date_1.addCalendarDays({ year: 2020, month: 'jan', day: 366 }, 0));
+console.log(calendar_date_1.addCalendarDays({ year: 2021, month: 'jan', day: 0 }, 1));
+console.log(calendar_date_1.addCalendarDays({ year: 2021, month: 'jan', day: -1 }, 0));
+console.log(calendar_date_1.addCalendarDays({ year: 2022, month: 'jan', day: -365 }, 0));
