@@ -3,10 +3,10 @@ import {
   addCalendarMonths,
   binarySearch,
   calendarDateEqual,
-  calendarDateLessThan,
+  calendarDateBefore,
   dayOfWeek,
-  differenceInCalendarDays,
-  differenceInCalendarMonths,
+  numberOfCalendarDaysBetween,
+  numberOfCalendarMonthsBetween,
   exponentialSearch,
 } from './calendar-date';
 
@@ -36,37 +36,37 @@ console.log(addCalendarDays({ year: 2021, month: 'jan', day: 1 }, 365));
 console.log(addCalendarDays({ year: 2021, month: 'jan', day: 1 }, 365 * 2));
 
 console.log(
-  calendarDateLessThan(
+  calendarDateBefore(
     { year: 2020, month: 'jan', day: 1 },
     { year: 2020, month: 'jan', day: 1 }
   )
 );
 console.log(
-  calendarDateLessThan(
+  calendarDateBefore(
     { year: 2020, month: 'jan', day: 1 },
     { year: 2020, month: 'jan', day: 2 }
   )
 );
 console.log(
-  calendarDateLessThan(
+  calendarDateBefore(
     { year: 2020, month: 'jan', day: 1 },
     { year: 2020, month: 'feb', day: 2 }
   )
 );
 console.log(
-  calendarDateLessThan(
+  calendarDateBefore(
     { year: 2020, month: 'feb', day: 2 },
     { year: 2020, month: 'jan', day: 1 }
   )
 );
 console.log(
-  calendarDateLessThan(
+  calendarDateBefore(
     { year: 2020, month: 'feb', day: 1 },
     { year: 2020, month: 'jan', day: 2 }
   )
 );
 console.log(
-  calendarDateLessThan(
+  calendarDateBefore(
     { year: 2019, month: 'feb', day: 1 },
     { year: 2020, month: 'jan', day: 2 }
   )
@@ -80,21 +80,21 @@ console.log(
 );
 
 console.log(
-  differenceInCalendarDays(
+  numberOfCalendarDaysBetween(
     { year: 2019, month: 'jan', day: 3 },
     { year: 2020, month: 'oct', day: 30 }
   )
 );
 
 console.log(
-  differenceInCalendarDays(
+  numberOfCalendarDaysBetween(
     { year: 1980, month: 'jan', day: 3 },
     { year: 2020, month: 'oct', day: 30 }
   )
 );
 
 console.log(
-  differenceInCalendarDays(
+  numberOfCalendarDaysBetween(
     { year: 2020, month: 'oct', day: 30 },
     { year: 1980, month: 'jan', day: 3 }
   )
