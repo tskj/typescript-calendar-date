@@ -170,7 +170,7 @@ export const exponentialSearch = (
   const search = (o: Order, n: number) => {
     if (pred(n) !== o) {
       if (n < 0) {
-        return [n, Math.floor(n / 2)];
+        return [n, Math.ceil(n / 2)];
       } else {
         return [Math.floor(n / 2), n];
       }
