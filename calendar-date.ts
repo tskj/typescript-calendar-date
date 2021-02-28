@@ -251,3 +251,10 @@ export const addMonthsWithClampedDay = (
   const dayOfMonth = Math.min(day, numberOfDaysInMonth(m));
   return { ...m, day: dayOfMonth };
 };
+
+export const rangeOfCalendarDates = (a: CalendarDate, b: CalendarDate) => {
+  if (calendarDateEqual(a, b)) {
+    return [];
+  }
+  return [a, ...rangeOfCalendarDates(addCalendarDays(a, 1), b)];
+};

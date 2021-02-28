@@ -26,8 +26,12 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 exports.__esModule = true;
-exports.addMonthsWithClampedDay = exports.lastDateInMonth = exports.dayOfWeek = exports.numberOfCalendarDaysBetween = exports.numberOfCalendarMonthsBetween = exports.binarySearch = exports.exponentialSearch = exports.calendarDateEqual = exports.calendarDateBefore = exports.addCalendarDays = exports.addCalendarMonths = void 0;
+exports.rangeOfCalendarDates = exports.addMonthsWithClampedDay = exports.lastDateInMonth = exports.dayOfWeek = exports.numberOfCalendarDaysBetween = exports.numberOfCalendarMonthsBetween = exports.binarySearch = exports.exponentialSearch = exports.calendarDateEqual = exports.calendarDateBefore = exports.calendarMonthEqual = exports.calendarMonthBefore = exports.addCalendarDays = exports.addCalendarMonths = void 0;
 var consts_1 = require("./consts");
 var utils_1 = require("./utils");
 var isLeapYear = function (_a) {
@@ -46,34 +50,34 @@ var isLeapYear = function (_a) {
 var numberOfDaysInMonth = function (_a) {
     var year = _a.year, month = _a.month;
     switch (month) {
-        case 'jan':
+        case "jan":
             return 31;
-        case 'feb':
+        case "feb":
             if (isLeapYear({ year: year })) {
                 return 29;
             }
             else {
                 return 28;
             }
-        case 'mar':
+        case "mar":
             return 31;
-        case 'apr':
+        case "apr":
             return 30;
-        case 'may':
+        case "may":
             return 31;
-        case 'jun':
+        case "jun":
             return 30;
-        case 'jul':
+        case "jul":
             return 31;
-        case 'aug':
+        case "aug":
             return 31;
-        case 'sep':
+        case "sep":
             return 30;
-        case 'oct':
+        case "oct":
             return 31;
-        case 'nov':
+        case "nov":
             return 30;
-        case 'dec':
+        case "dec":
             return 31;
     }
 };
@@ -130,19 +134,24 @@ exports.addCalendarDays = function (_a, daysToAdd) {
         }
     }
 };
-exports.calendarDateBefore = function (a, b) {
+exports.calendarMonthBefore = function (a, b) {
     if (a.year < b.year) {
         return true;
     }
     if (a.year === b.year) {
-        if (consts_1.monthNumber(a.month) < consts_1.monthNumber(b.month)) {
-            return true;
-        }
-        if (a.month === b.month) {
-            if (a.day < b.day) {
-                return true;
-            }
-        }
+        return consts_1.monthNumber(a.month) < consts_1.monthNumber(b.month);
+    }
+    return false;
+};
+exports.calendarMonthEqual = function (a, b) {
+    return !exports.calendarMonthBefore(a, b) && !exports.calendarMonthBefore(b, a);
+};
+exports.calendarDateBefore = function (a, b) {
+    if (exports.calendarMonthBefore(a, b)) {
+        return true;
+    }
+    if (consts_1.monthNumber(a.month) === consts_1.monthNumber(b.month)) {
+        return a.day < b.day;
     }
     return false;
 };
@@ -150,15 +159,14 @@ exports.calendarDateEqual = function (a, b) {
     return !exports.calendarDateBefore(a, b) && !exports.calendarDateBefore(b, a);
 };
 exports.exponentialSearch = function (pred) {
-    if (pred(0) === 'eq') {
+    if (pred(0) === "eq") {
         return [0, 0];
     }
-    var direction = pred(0) === 'lt' ? 1 : -1;
+    var direction = pred(0) === "lt" ? 1 : -1;
     var search = function (o, n) {
-        console.log('search', o, n);
         if (pred(n) !== o) {
             if (n < 0) {
-                return [n, Math.floor(n / 2)];
+                return [n, Math.ceil(n / 2)];
             }
             else {
                 return [Math.floor(n / 2), n];
@@ -172,10 +180,10 @@ exports.binarySearch = function (pred, _a) {
     var _b = __read(_a, 2), start = _b[0], end = _b[1];
     var middle = Math.floor((start + end) / 2);
     var atMiddle = pred(middle);
-    if (atMiddle === 'eq') {
+    if (atMiddle === "eq") {
         return middle;
     }
-    else if (atMiddle === 'lt') {
+    else if (atMiddle === "lt") {
         return exports.binarySearch(pred, [middle + 1, end]);
     }
     else {
@@ -188,25 +196,21 @@ var solve = function (pred) {
 };
 exports.numberOfCalendarMonthsBetween = function (a, b) {
     var lteq = function (a, b) {
-        return exports.calendarDateBefore(__assign(__assign({}, a), { day: 1 }), __assign(__assign({}, b), { day: 1 }))
-            ? 'lt'
-            : exports.calendarDateEqual(__assign(__assign({}, a), { day: 1 }), __assign(__assign({}, b), { day: 1 }))
-                ? 'eq'
-                : 'gt';
+        return exports.calendarMonthBefore(a, b) ? "lt" : exports.calendarMonthEqual(a, b) ? "eq" : "gt";
     };
     var n = solve(function (n) { return lteq(exports.addCalendarMonths(a, n), b); });
     return n;
 };
 exports.numberOfCalendarDaysBetween = function (a, b) {
     var lteq = function (a, b) {
-        return exports.calendarDateBefore(a, b) ? 'lt' : exports.calendarDateEqual(a, b) ? 'eq' : 'gt';
+        return exports.calendarDateBefore(a, b) ? "lt" : exports.calendarDateEqual(a, b) ? "eq" : "gt";
     };
     var n = solve(function (n) { return lteq(exports.addCalendarDays(a, n), b); });
     return n;
 };
 exports.dayOfWeek = function (_a) {
     var year = _a.year, month = _a.month, day = _a.day;
-    var firstMondayof2021 = { year: 2021, month: 'jan', day: 4 };
+    var firstMondayof2021 = { year: 2021, month: "jan", day: 4 };
     var diff = exports.numberOfCalendarDaysBetween(firstMondayof2021, {
         year: year,
         month: month,
@@ -229,4 +233,10 @@ exports.addMonthsWithClampedDay = function (_a, months) {
     var m = exports.addCalendarMonths({ year: year, month: month }, months);
     var dayOfMonth = Math.min(day, numberOfDaysInMonth(m));
     return __assign(__assign({}, m), { day: dayOfMonth });
+};
+exports.rangeOfCalendarDates = function (a, b) {
+    if (exports.calendarDateEqual(a, b)) {
+        return [];
+    }
+    return __spread([a], exports.rangeOfCalendarDates(exports.addCalendarDays(a, 1), b));
 };
