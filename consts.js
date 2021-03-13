@@ -10,7 +10,7 @@ exports.weekDays = [
     'sat',
     'sun',
 ];
-exports.monthNumber = function (month) {
+var monthNumber = function (month) {
     switch (month) {
         case 'jan':
             return 1;
@@ -38,6 +38,7 @@ exports.monthNumber = function (month) {
             return 12;
     }
 };
+exports.monthNumber = monthNumber;
 var months = [
     'jan',
     'feb',
@@ -52,4 +53,5 @@ var months = [
     'nov',
     'dec',
 ];
-exports.monthName = function (n) { return months[n - 1]; };
+var monthName = function (n) { return months[n - 1]; };
+exports.monthName = monthName;
