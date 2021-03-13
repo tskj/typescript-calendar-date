@@ -132,18 +132,26 @@ export const addCalendarDays = (
   }
 };
 
-export const calendarDateBefore = (a: CalendarDate, b: CalendarDate) => {
+export const calendarMonthBefore = (a: CalendarMonth, b: CalendarMonth) => {
   if (a.year < b.year) {
     return true;
   }
   if (a.year === b.year) {
-    if (monthNumber(a.month) < monthNumber(b.month)) {
+    return monthNumber(a.month) < monthNumber(b.month);
+  }
+  return false;
+};
+
+export const calendarMonthEqual = (a: CalendarMonth, b: CalendarMonth) =>
+  !calendarMonthBefore(a, b) && !calendarMonthBefore(b, a);
+
+export const calendarDateBefore = (a: CalendarDate, b: CalendarDate) => {
+  if (calendarMonthBefore(a, b)) {
+    return true;
+  }
+  if (calendarMonthEqual(a, b)) {
+    if (a.day < b.day) {
       return true;
-    }
-    if (a.month === b.month) {
-      if (a.day < b.day) {
-        return true;
-      }
     }
   }
   return false;
@@ -200,11 +208,7 @@ export const numberOfCalendarMonthsBetween = (
   b: CalendarMonth
 ): number => {
   const lteq = (a: CalendarMonth, b: CalendarMonth) =>
-    calendarDateBefore({ ...a, day: 1 }, { ...b, day: 1 })
-      ? 'lt'
-      : calendarDateEqual({ ...a, day: 1 }, { ...b, day: 1 })
-      ? 'eq'
-      : 'gt';
+    calendarMonthBefore(a, b) ? 'lt' : calendarMonthEqual(a, b) ? 'eq' : 'gt';
   const n = solve((n) => lteq(addCalendarMonths(a, n), b));
   return n;
 };
