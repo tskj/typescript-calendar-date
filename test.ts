@@ -1,8 +1,8 @@
 import {
   addCalendarDays,
   addCalendarMonths,
-  calendarDateEqual,
-  calendarDateBefore,
+  calendarDatesEqual,
+  calendarDateLessThan,
   dayOfWeek,
   numberOfCalendarDaysBetween,
   rangeOfCalendarDates,
@@ -49,68 +49,68 @@ console.log(
 );
 
 console.log(
-  calendarDateBefore(
-    { year: 2020, month: 'jan', day: 1 },
-    { year: 2020, month: 'jan', day: 1 }
-  )
+  calendarDateLessThan({
+    before: { year: 2020, month: 'jan', day: 1 },
+    after: { year: 2020, month: 'jan', day: 1 },
+  })
 );
 console.log(
-  calendarDateBefore(
-    { year: 2020, month: 'jan', day: 1 },
-    { year: 2020, month: 'jan', day: 2 }
-  )
+  calendarDateLessThan({
+    before: { year: 2020, month: 'jan', day: 1 },
+    after: { year: 2020, month: 'jan', day: 2 },
+  })
 );
 console.log(
-  calendarDateBefore(
-    { year: 2020, month: 'jan', day: 1 },
+  calendarDateLessThan({
+    before: { year: 2020, month: 'jan', day: 1 },
+    after: { year: 2020, month: 'feb', day: 2 },
+  })
+);
+console.log(
+  calendarDateLessThan({
+    before: { year: 2020, month: 'feb', day: 2 },
+    after: { year: 2020, month: 'jan', day: 1 },
+  })
+);
+console.log(
+  calendarDateLessThan({
+    before: { year: 2020, month: 'feb', day: 1 },
+    after: { year: 2020, month: 'jan', day: 2 },
+  })
+);
+console.log(
+  calendarDateLessThan({
+    before: { year: 2019, month: 'feb', day: 1 },
+    after: { year: 2020, month: 'jan', day: 2 },
+  })
+);
+
+console.log(
+  calendarDatesEqual(
+    { year: 2020, month: 'feb', day: 2 },
     { year: 2020, month: 'feb', day: 2 }
   )
 );
+
 console.log(
-  calendarDateBefore(
-    { year: 2020, month: 'feb', day: 2 },
-    { year: 2020, month: 'jan', day: 1 }
-  )
-);
-console.log(
-  calendarDateBefore(
-    { year: 2020, month: 'feb', day: 1 },
-    { year: 2020, month: 'jan', day: 2 }
-  )
-);
-console.log(
-  calendarDateBefore(
-    { year: 2019, month: 'feb', day: 1 },
-    { year: 2020, month: 'jan', day: 2 }
-  )
+  numberOfCalendarDaysBetween({
+    start: { year: 2019, month: 'jan', day: 3 },
+    end: { year: 2020, month: 'oct', day: 30 },
+  })
 );
 
 console.log(
-  calendarDateEqual(
-    { year: 2020, month: 'feb', day: 2 },
-    { year: 2020, month: 'feb', day: 2 }
-  )
+  numberOfCalendarDaysBetween({
+    start: { year: 1980, month: 'jan', day: 3 },
+    end: { year: 2020, month: 'oct', day: 30 },
+  })
 );
 
 console.log(
-  numberOfCalendarDaysBetween(
-    { year: 2019, month: 'jan', day: 3 },
-    { year: 2020, month: 'oct', day: 30 }
-  )
-);
-
-console.log(
-  numberOfCalendarDaysBetween(
-    { year: 1980, month: 'jan', day: 3 },
-    { year: 2020, month: 'oct', day: 30 }
-  )
-);
-
-console.log(
-  numberOfCalendarDaysBetween(
-    { year: 2020, month: 'oct', day: 30 },
-    { year: 1980, month: 'jan', day: 3 }
-  )
+  numberOfCalendarDaysBetween({
+    start: { year: 2020, month: 'oct', day: 30 },
+    end: { year: 1980, month: 'jan', day: 3 },
+  })
 );
 
 console.log(dayOfWeek({ year: 1988, month: 'jan', day: 6 }));
@@ -126,8 +126,8 @@ console.log(addCalendarDays({ year: 2021, month: 'jan', day: -1 }, 0));
 console.log(addCalendarDays({ year: 2022, month: 'jan', day: -365 }, 0));
 
 console.log(
-  numberOfCalendarDaysBetween(
-    { year: 1900, month: 'jan', day: 3 },
-    { year: 2020, month: 'oct', day: 30 }
-  )
+  numberOfCalendarDaysBetween({
+    start: { year: 1900, month: 'jan', day: 3 },
+    end: { year: 2020, month: 'oct', day: 30 },
+  })
 );

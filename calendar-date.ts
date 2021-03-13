@@ -132,7 +132,13 @@ export const addCalendarDays = (
   }
 };
 
-export const calendarMonthBefore = (a: CalendarMonth, b: CalendarMonth) => {
+export const calendarMonthLessThan = ({
+  before: a,
+  after: b,
+}: {
+  before: CalendarMonth;
+  after: CalendarMonth;
+}) => {
   if (a.year < b.year) {
     return true;
   }
@@ -142,14 +148,21 @@ export const calendarMonthBefore = (a: CalendarMonth, b: CalendarMonth) => {
   return false;
 };
 
-export const calendarMonthEqual = (a: CalendarMonth, b: CalendarMonth) =>
-  !calendarMonthBefore(a, b) && !calendarMonthBefore(b, a);
+export const calendarMonthsEqual = (a: CalendarMonth, b: CalendarMonth) =>
+  !calendarMonthLessThan({ before: a, after: b }) &&
+  !calendarMonthLessThan({ before: b, after: a });
 
-export const calendarDateBefore = (a: CalendarDate, b: CalendarDate) => {
-  if (calendarMonthBefore(a, b)) {
+export const calendarDateLessThan = ({
+  before: a,
+  after: b,
+}: {
+  before: CalendarDate;
+  after: CalendarDate;
+}) => {
+  if (calendarMonthLessThan({ before: a, after: b })) {
     return true;
   }
-  if (calendarMonthEqual(a, b)) {
+  if (calendarMonthsEqual(a, b)) {
     if (a.day < b.day) {
       return true;
     }
@@ -157,14 +170,13 @@ export const calendarDateBefore = (a: CalendarDate, b: CalendarDate) => {
   return false;
 };
 
-export const calendarDateEqual = (a: CalendarDate, b: CalendarDate) =>
-  !calendarDateBefore(a, b) && !calendarDateBefore(b, a);
+export const calendarDatesEqual = (a: CalendarDate, b: CalendarDate) =>
+  !calendarDateLessThan({ before: b, after: a }) &&
+  !calendarDateLessThan({ before: b, after: a });
 
 type Order = 'lt' | 'eq' | 'gt';
 
-export const exponentialSearch = (
-  pred: (n: number) => Order
-): [number, number] => {
+const exponentialSearch = (pred: (n: number) => Order): [number, number] => {
   if (pred(0) === 'eq') {
     return [0, 0];
   }
@@ -182,7 +194,7 @@ export const exponentialSearch = (
   return search(pred(0), direction);
 };
 
-export const binarySearch = (
+const binarySearch = (
   pred: (n: number) => Order,
   [start, end]: [number, number]
 ): number => {
@@ -203,32 +215,49 @@ const solve = (pred: (n: number) => Order): number => {
   return binarySearch(pred, range);
 };
 
-export const numberOfCalendarMonthsBetween = (
-  a: CalendarMonth,
-  b: CalendarMonth
-): number => {
+export const numberOfCalendarMonthsBetween = ({
+  start,
+  end,
+}: {
+  start: CalendarMonth;
+  end: CalendarMonth;
+}): number => {
   const lteq = (a: CalendarMonth, b: CalendarMonth) =>
-    calendarMonthBefore(a, b) ? 'lt' : calendarMonthEqual(a, b) ? 'eq' : 'gt';
-  const n = solve((n) => lteq(addCalendarMonths(a, n), b));
+    calendarMonthLessThan({ before: a, after: b })
+      ? 'lt'
+      : calendarMonthsEqual(a, b)
+      ? 'eq'
+      : 'gt';
+  const n = solve((n) => lteq(addCalendarMonths(start, n), end));
   return n;
 };
 
-export const numberOfCalendarDaysBetween = (
-  a: CalendarDate,
-  b: CalendarDate
-): number => {
+export const numberOfCalendarDaysBetween = ({
+  start,
+  end,
+}: {
+  start: CalendarDate;
+  end: CalendarDate;
+}): number => {
   const lteq = (a: CalendarDate, b: CalendarDate) =>
-    calendarDateBefore(a, b) ? 'lt' : calendarDateEqual(a, b) ? 'eq' : 'gt';
-  const n = solve((n) => lteq(addCalendarDays(a, n), b));
+    calendarDateLessThan({ before: a, after: b })
+      ? 'lt'
+      : calendarDatesEqual(a, b)
+      ? 'eq'
+      : 'gt';
+  const n = solve((n) => lteq(addCalendarDays(start, n), end));
   return n;
 };
 
 export const dayOfWeek = ({ year, month, day }: CalendarDate): WeekDay => {
   const firstMondayof2021: CalendarDate = { year: 2021, month: 'jan', day: 4 };
-  const diff = numberOfCalendarDaysBetween(firstMondayof2021, {
-    year,
-    month,
-    day,
+  const diff = numberOfCalendarDaysBetween({
+    start: firstMondayof2021,
+    end: {
+      year,
+      month,
+      day,
+    },
   });
   return weekDays[mod(diff, 7)];
 };
@@ -255,7 +284,7 @@ export const addMonthsWithClampedDay = (
 };
 
 export const rangeOfCalendarDates = (a: CalendarDate, b: CalendarDate) => {
-  if (calendarDateEqual(a, b)) {
+  if (calendarDatesEqual(a, b)) {
     return [];
   }
   return [a, ...rangeOfCalendarDates(addCalendarDays(a, 1), b)];
