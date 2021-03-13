@@ -18,7 +18,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 exports.__esModule = true;
-exports.rangeOfCalendarDates = exports.addMonthsWithClampedDay = exports.lastDateInMonth = exports.dayOfWeek = exports.numberOfCalendarDaysBetween = exports.numberOfCalendarMonthsBetween = exports.calendarDatesEqual = exports.calendarDateLessThan = exports.calendarMonthsEqual = exports.calendarMonthLessThan = exports.addCalendarDays = exports.addCalendarMonths = void 0;
+exports.rangeOfCalendarMonths = exports.rangeOfCalendarDates = exports.lastDateInMonth = exports.dayOfWeek = exports.numberOfCalendarDaysBetween = exports.numberOfCalendarMonthsBetween = exports.calendarDatesEqual = exports.calendarDateLessThan = exports.calendarMonthsEqual = exports.calendarMonthLessThan = exports.addCalendarDays = exports.addCalendarMonths = void 0;
 var consts_1 = require("./consts");
 var utils_1 = require("./utils");
 var isLeapYear = function (_a) {
@@ -244,13 +244,6 @@ var lastDateInMonth = function (_a) {
     });
 };
 exports.lastDateInMonth = lastDateInMonth;
-var addMonthsWithClampedDay = function (_a, months) {
-    var year = _a.year, month = _a.month, day = _a.day;
-    var m = exports.addCalendarMonths({ year: year, month: month }, months);
-    var dayOfMonth = Math.min(day, numberOfDaysInMonth(m));
-    return __assign(__assign({}, m), { day: dayOfMonth });
-};
-exports.addMonthsWithClampedDay = addMonthsWithClampedDay;
 var rangeOfCalendarDates = function (a, b) {
     if (exports.calendarDatesEqual(a, b)) {
         return [];
@@ -258,3 +251,10 @@ var rangeOfCalendarDates = function (a, b) {
     return __spreadArrays([a], exports.rangeOfCalendarDates(exports.addCalendarDays(a, 1), b));
 };
 exports.rangeOfCalendarDates = rangeOfCalendarDates;
+var rangeOfCalendarMonths = function (a, b) {
+    if (exports.calendarMonthsEqual(a, b)) {
+        return [];
+    }
+    return __spreadArrays([a], exports.rangeOfCalendarMonths(exports.addCalendarMonths(a, 1), b));
+};
+exports.rangeOfCalendarMonths = rangeOfCalendarMonths;

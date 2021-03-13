@@ -274,18 +274,16 @@ export const lastDateInMonth = ({
   day: numberOfDaysInMonth({ year, month }),
 });
 
-export const addMonthsWithClampedDay = (
-  { year, month, day }: CalendarDate,
-  months: number
-): CalendarDate => {
-  const m = addCalendarMonths({ year, month }, months);
-  const dayOfMonth = Math.min(day, numberOfDaysInMonth(m));
-  return { ...m, day: dayOfMonth };
-};
-
 export const rangeOfCalendarDates = (a: CalendarDate, b: CalendarDate) => {
   if (calendarDatesEqual(a, b)) {
     return [];
   }
   return [a, ...rangeOfCalendarDates(addCalendarDays(a, 1), b)];
+};
+
+export const rangeOfCalendarMonths = (a: CalendarMonth, b: CalendarMonth) => {
+  if (calendarMonthsEqual(a, b)) {
+    return [];
+  }
+  return [a, ...rangeOfCalendarMonths(addCalendarMonths(a, 1), b)];
 };
