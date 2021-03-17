@@ -9,9 +9,9 @@ import {
 } from './consts';
 import { mod } from './utils';
 
-type CalendarYear = { year: Year };
-type CalendarMonth = CalendarYear & { month: Month };
-type CalendarDate = CalendarMonth & { day: Day };
+export type CalendarYear = { year: Year };
+export type CalendarMonth = CalendarYear & { month: Month };
+export type CalendarDate = CalendarMonth & { day: Day };
 
 const isLeapYear = ({ year }: CalendarYear) => {
   if (year % 400 === 0) {
@@ -26,7 +26,7 @@ const isLeapYear = ({ year }: CalendarYear) => {
   return false;
 };
 
-const numberOfDaysInMonth = ({ year, month }: CalendarMonth): Day => {
+export const numberOfDaysInMonth = ({ year, month }: CalendarMonth): Day => {
   switch (month) {
     case 'jan':
       return 31;
@@ -61,7 +61,7 @@ const numberOfDaysInMonth = ({ year, month }: CalendarMonth): Day => {
 
 export const addCalendarMonths = (
   { year, month }: CalendarMonth,
-  months: number
+  months: number,
 ): CalendarMonth => {
   const monthNumberZeroIndexed = monthNumber(month) - 1;
   return {
@@ -72,13 +72,13 @@ export const addCalendarMonths = (
 
 export const addCalendarDays = (
   { year, month, day }: CalendarDate,
-  daysToAdd: number
+  daysToAdd: number,
 ): CalendarDate => {
   const daysInMonth = numberOfDaysInMonth({ year, month });
   if (day > daysInMonth) {
     return addCalendarDays(
       { year, month, day: daysInMonth },
-      day - daysInMonth
+      day - daysInMonth,
     );
   }
   if (day < 0) {
@@ -114,7 +114,7 @@ export const addCalendarDays = (
           ...prevMonth,
           day: numberOfDaysInMonth(prevMonth),
         },
-        -(daysToRemove - day)
+        -(daysToRemove - day),
       );
     }
   } else {
@@ -126,7 +126,7 @@ export const addCalendarDays = (
     } else {
       return addCalendarDays(
         { ...addCalendarMonths({ year, month }, 1), day: 0 },
-        daysToAdd - daysLeftInMonth
+        daysToAdd - daysLeftInMonth,
       );
     }
   }
@@ -181,7 +181,7 @@ const exponentialSearch = (pred: (n: number) => Order): [number, number] => {
     return [0, 0];
   }
   const direction = pred(0) === 'lt' ? 1 : -1;
-  const search = (o: Order, n: number) => {
+  const search = (o: Order, n: number): [number, number] => {
     if (pred(n) !== o) {
       if (n < 0) {
         return [n, Math.ceil(n / 2)];
@@ -196,7 +196,7 @@ const exponentialSearch = (pred: (n: number) => Order): [number, number] => {
 
 const binarySearch = (
   pred: (n: number) => Order,
-  [start, end]: [number, number]
+  [start, end]: [number, number],
 ): number => {
   const middle = Math.floor((start + end) / 2);
   const atMiddle = pred(middle);
@@ -274,16 +274,22 @@ export const lastDateInMonth = ({
   day: numberOfDaysInMonth({ year, month }),
 });
 
-export const rangeOfCalendarDates = (a: CalendarDate, b: CalendarDate) => {
+export const rangeOfCalendarDates = (
+  a: CalendarDate,
+  b: CalendarDate,
+): CalendarDate[] => {
   if (calendarDatesEqual(a, b)) {
-    return [];
+    return [a];
   }
   return [a, ...rangeOfCalendarDates(addCalendarDays(a, 1), b)];
 };
 
-export const rangeOfCalendarMonths = (a: CalendarMonth, b: CalendarMonth) => {
+export const rangeOfCalendarMonths = (
+  a: CalendarMonth,
+  b: CalendarMonth,
+): CalendarMonth[] => {
   if (calendarMonthsEqual(a, b)) {
-    return [];
+    return [a];
   }
   return [a, ...rangeOfCalendarMonths(addCalendarMonths(a, 1), b)];
 };

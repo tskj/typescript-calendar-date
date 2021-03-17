@@ -44,73 +44,73 @@ console.log(
       year: 2020,
       month: 'dec',
       day: 31,
-    }
-  )
+    },
+  ),
 );
 
 console.log(
   calendarDateLessThan({
     before: { year: 2020, month: 'jan', day: 1 },
     after: { year: 2020, month: 'jan', day: 1 },
-  })
+  }),
 );
 console.log(
   calendarDateLessThan({
     before: { year: 2020, month: 'jan', day: 1 },
     after: { year: 2020, month: 'jan', day: 2 },
-  })
+  }),
 );
 console.log(
   calendarDateLessThan({
     before: { year: 2020, month: 'jan', day: 1 },
     after: { year: 2020, month: 'feb', day: 2 },
-  })
+  }),
 );
 console.log(
   calendarDateLessThan({
     before: { year: 2020, month: 'feb', day: 2 },
     after: { year: 2020, month: 'jan', day: 1 },
-  })
+  }),
 );
 console.log(
   calendarDateLessThan({
     before: { year: 2020, month: 'feb', day: 1 },
     after: { year: 2020, month: 'jan', day: 2 },
-  })
+  }),
 );
 console.log(
   calendarDateLessThan({
     before: { year: 2019, month: 'feb', day: 1 },
     after: { year: 2020, month: 'jan', day: 2 },
-  })
+  }),
 );
 
 console.log(
   calendarDatesEqual(
     { year: 2020, month: 'feb', day: 2 },
-    { year: 2020, month: 'feb', day: 2 }
-  )
+    { year: 2020, month: 'feb', day: 2 },
+  ),
 );
 
 console.log(
   numberOfCalendarDaysBetween({
     start: { year: 2019, month: 'jan', day: 3 },
     end: { year: 2020, month: 'oct', day: 30 },
-  })
+  }),
 );
 
 console.log(
   numberOfCalendarDaysBetween({
     start: { year: 1980, month: 'jan', day: 3 },
     end: { year: 2020, month: 'oct', day: 30 },
-  })
+  }),
 );
 
 console.log(
   numberOfCalendarDaysBetween({
     start: { year: 2020, month: 'oct', day: 30 },
     end: { year: 1980, month: 'jan', day: 3 },
-  })
+  }),
 );
 
 console.log(dayOfWeek({ year: 1988, month: 'jan', day: 6 }));
@@ -127,7 +127,7 @@ console.log(addCalendarDays({ year: 2022, month: 'jan', day: -365 }, 0));
 
 console.log(
   numberOfCalendarDaysBetween({
-    start: { year: 1900, month: 'jan', day: 3 },
+    start: { year: 2019, month: 'jan', day: 3 },
     end: { year: 2020, month: 'oct', day: 30 },
-  })
+  }),
 );
