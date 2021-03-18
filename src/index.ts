@@ -13,6 +13,6 @@ export {
   numberOfCalendarDaysBetween,
   dayOfWeek,
   lastDateInMonth,
-  rangeOfCalendarDates,
-  rangeOfCalendarMonths,
+  periodOfCalendarDates,
+  periodOfCalendarMonths,
 } from './calendar-date';

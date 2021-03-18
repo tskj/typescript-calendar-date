@@ -5,7 +5,7 @@ import {
   calendarDateLessThan,
   dayOfWeek,
   numberOfCalendarDaysBetween,
-  rangeOfCalendarDates,
+  periodOfCalendarDates,
 } from './calendar-date';
 
 console.log(addCalendarMonths({ year: 2020, month: 'jan' }, -18));
@@ -34,7 +34,7 @@ console.log(addCalendarDays({ year: 2021, month: 'jan', day: 1 }, 365));
 console.log(addCalendarDays({ year: 2021, month: 'jan', day: 1 }, 365 * 2));
 
 console.log(
-  rangeOfCalendarDates(
+  periodOfCalendarDates(
     {
       year: 2020,
       month: 'oct',
@@ -49,40 +49,40 @@ console.log(
 );
 
 console.log(
-  calendarDateLessThan({
-    before: { year: 2020, month: 'jan', day: 1 },
-    after: { year: 2020, month: 'jan', day: 1 },
-  }),
+  calendarDateLessThan(
+    { year: 2020, month: 'jan', day: 1 },
+    { year: 2020, month: 'jan', day: 1 },
+  ),
 );
 console.log(
-  calendarDateLessThan({
-    before: { year: 2020, month: 'jan', day: 1 },
-    after: { year: 2020, month: 'jan', day: 2 },
-  }),
+  calendarDateLessThan(
+    { year: 2020, month: 'jan', day: 1 },
+    { year: 2020, month: 'jan', day: 2 },
+  ),
 );
 console.log(
-  calendarDateLessThan({
-    before: { year: 2020, month: 'jan', day: 1 },
-    after: { year: 2020, month: 'feb', day: 2 },
-  }),
+  calendarDateLessThan(
+    { year: 2020, month: 'jan', day: 1 },
+    { year: 2020, month: 'feb', day: 2 },
+  ),
 );
 console.log(
-  calendarDateLessThan({
-    before: { year: 2020, month: 'feb', day: 2 },
-    after: { year: 2020, month: 'jan', day: 1 },
-  }),
+  calendarDateLessThan(
+    { year: 2020, month: 'feb', day: 2 },
+    { year: 2020, month: 'jan', day: 1 },
+  ),
 );
 console.log(
-  calendarDateLessThan({
-    before: { year: 2020, month: 'feb', day: 1 },
-    after: { year: 2020, month: 'jan', day: 2 },
-  }),
+  calendarDateLessThan(
+    { year: 2020, month: 'feb', day: 1 },
+    { year: 2020, month: 'jan', day: 2 },
+  ),
 );
 console.log(
-  calendarDateLessThan({
-    before: { year: 2019, month: 'feb', day: 1 },
-    after: { year: 2020, month: 'jan', day: 2 },
-  }),
+  calendarDateLessThan(
+    { year: 2019, month: 'feb', day: 1 },
+    { year: 2020, month: 'jan', day: 2 },
+  ),
 );
 
 console.log(
