@@ -152,3 +152,7 @@ const startOfQ1: CalendarDate = { year: 2021, month: 'jan', day: 1 };
 const endOfQ1 = lastDateInMonth({ year: 2021, month: 'mar' });
 
 console.log(areInOrder(startOfQ1, today, endOfQ1));
+
+const apr: CalendarDate = { year: 2021, month: `apr`, day: 15 };
+const jun = addMonths(apr, 2);
+console.log(numberOfDaysBetween({ start: apr, end: { ...jun, day: 15 } }));

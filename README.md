@@ -1,10 +1,10 @@
 ![logo](logo.png)
 #
 
-_Zero-depenency, small, immutable library for handling calendar dates **correctly**._
+_Zero-depenency, small, immutable library favouring excplicitness, for handling calendar dates **correctly**._
 
 `typescript-calendar-date` works on objects like `{ year: 2021, month: 'jan', day: 1 }` which you can easily construct and destructure anywhere in your app. 
-The library provides a small set of powerful functions which are easy to understand and use. No more date bugs!
+The library provides a small set of powerful functions which are simple to understand and use. It gives you the exact level of control you feel you need when working with dates (no more guessing and feeling of uncertainty about off by one mistakes), and handles all the complexity you don't care about. No more date bugs!
 
 ## Philosophy
 
@@ -77,3 +77,37 @@ const foo = (date: CalendarDate) => {
 My opinion is this code does exactly what you intuitively think it should do. You have two values representing the start of and the end of the quarter, respectively - then you test if your date is *between* those dates - inclusively, of course. For convenience, `areInOrder` takes an arbitrary number of dates, so you can express some pretty complex relationships using just one or a few function calls.
 
 If you're wondering about `lastDateInMonth`, you could just create `{ year: 2021, month: 'mar', day: 31 }` directly in the same way you construct the first day of the year (`startOfQ1`), but I think it's cleaner and safer to just use `lastDateInMonth` always, both because it's very explicit of what you want, and you don't risk mis-remembering which months have how many days - and of course it also handles leap years correctly. I don't provide a `firstDateInMonth`, although you are welcome to create one for yourself. The reasoning for this is that I want to be excplicit about showing you where the complexity in this domain (calendar dates) lies - it's relatively much more tricky to express the idea of the last day in a month, than the first. There is a certain tempting symmetry of providing both `firstDateInMonth` and `lastDateInMonth`, but this would be a kind of "api lie", exactly because this pleasing symmetry is false.
+
+By now we've covered most of the complexity, the rest should be pretty straight forward. Adding or subtracting a number of days is as simple as:
+
+```typescript
+addDays(myDate, 60);
+```
+
+although, a lot of the time you might want to add a whole number of months, in which case you would call
+
+```typescript
+addMonths(myDate, 2);
+```
+
+But aah, I lied. Here comes some more complexity. But it is essential complexity, I promise! What *should* the result be if you add a whole number of months to April 15th? Pretty obviously June 15th, but there is 61 days between these two dates. And even worse, if you have June 30th, representing the end of that month, and you add two months to it, what should the answer be? August 30th? But that isn't the last date of that month, August 31st is! And that is probably what you meant. So here I require excplicitness; therefore `addMonths` gives you back not a `CalendarDate`, but a `CalendarMonth`, which looks like `{ year, month }`. This means that `CalendarDate` is a structural subtype of `CalendarMonth`, and can be used anywhere a `CalendarMonth` is expected. So if in your domain you have April 15th representing the middle of the month, and you want to add two months to it and get the middle of June, that is June 15th, you have to put the `day` part back in, like this:
+
+```typescript
+const apr: CalendarDate = { year: 2021, month: `apr`, day: 15 };
+const jun = { ...addMonths(apr, 2), day: 15 };
+```
+
+A bit more verbose and annoying maybe, but a whole of a lot simpler and more excplicit. The same goes if you want the end of the month.
+
+```typescript
+const endOfJune: CalendarDate = { year: 2021, month: `jun`, day: 30 };
+const endOfAugust = lastDateInMonth(addMonths(endOfJune, 2)); // This is the 31st.
+```
+
+I'll leave you with a final example, building on a previous example. Sometimes you need a list of all the dates in a range or period to iterate over, let's say all the dates in Q1 from earlier. Simply use the aptly named `periodOfDates`.
+
+```typescript
+const datesInQ1 = periodOfDates(startOfQ1, endOfQ1); // : CalendarDate[]
+```
+
+This function has an inclusive range in both ends for convenience, as this is what most people want most of the time when writing code like this.
