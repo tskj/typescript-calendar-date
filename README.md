@@ -6,11 +6,13 @@ _Zero-depenency, small, immutable library favouring excplicitness, for handling 
 `typescript-calendar-date` works on objects like `{ year: 2021, month: 'jan', day: 1 }` which you can easily construct and destructure anywhere in your app. 
 The library provides a small set of powerful functions which are simple to understand and use. It gives you the exact level of control you feel you need when working with dates (no more guessing and feeling of uncertainty about off by one mistakes), and handles all the complexity you don't care about. No more date bugs!
 
+Installation: [npm i typescript-calendar-date](https://www.npmjs.com/package/typescript-calendar-date)
+
 ## Philosophy
 
 Everyone gets dates wrong, especially programmers. If asked to calculate how many days old he is, a programmer would convert the current date and time, say `Date.now()`, to the number of seconds since Unix epoch, 1970, or just epoch time, for short.
 Then he would convert the middle of the day, or even midnight, in some arbitrary timezone, of when he was born, say `April 1, 1990`, to a number representing the number of seconds he was born after epoch.
-Then he would subtract these two numbers, and finally, divide by some constants representing the number of seconds in a day.
+Then he would subtract these two numbers, and finally, divide by some constant representing the number of seconds in a day.
 
 This is insane. Just count the number of days! Calendars were invented by humans to be useable by humans, so lets program them directly. It's fairly easy, the most complicated part
 of our modern calendar, the Gregorian Calendar, is leap years: every fourth, but not every hundreth, except every four-hundreth. Luckily this library encapsulates all that complexity for you!
