@@ -1,3 +1,4 @@
+import { monthName } from '.';
 import {
   addDays,
   addMonths,
@@ -6,6 +7,9 @@ import {
   dayOfWeek,
   numberOfDaysBetween,
   periodOfDates,
+  CalendarDate,
+  areInOrder,
+  lastDateInMonth,
 } from './calendar-date';
 
 console.log(addMonths({ year: 2020, month: 'jan' }, -18));
@@ -131,3 +135,20 @@ console.log(
     end: { year: 2020, month: 'oct', day: 30 },
   }),
 );
+
+const birthDate: CalendarDate = { year: 1990, month: 'apr', day: 1 };
+
+const today = {
+  year: new Date().getFullYear(),
+  month: monthName(new Date().getMonth() + 1),
+  day: new Date().getDate(),
+};
+
+const daysOld = numberOfDaysBetween({ start: birthDate, end: today });
+console.log(today);
+console.log('days old:', daysOld);
+
+const startOfQ1: CalendarDate = { year: 2021, month: 'jan', day: 1 };
+const endOfQ1 = lastDateInMonth({ year: 2021, month: 'mar' });
+
+console.log(areInOrder(startOfQ1, today, endOfQ1));

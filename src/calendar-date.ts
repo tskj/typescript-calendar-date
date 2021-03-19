@@ -222,7 +222,7 @@ export const areInOrder = (...dates: CalendarDate[]): boolean => {
   }
   const [a, b, ...rest] = dates;
   if (lteq(a, b)) {
-    return areInOrder(...rest);
+    return areInOrder(b, ...rest);
   }
   return false;
 };
