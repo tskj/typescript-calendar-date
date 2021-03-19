@@ -65,7 +65,7 @@ export const numberOfDaysInMonth = ({ year, month }: CalendarMonth): Day => {
 
 export const dayOfWeek = ({ year, month, day }: CalendarDate): WeekDay => {
   const firstMondayOf2021: CalendarDate = { year: 2021, month: 'jan', day: 4 };
-  const diff = numberOfCalendarDaysBetween({
+  const diff = numberOfDaysBetween({
     start: firstMondayOf2021,
     end: {
       year,
@@ -76,7 +76,7 @@ export const dayOfWeek = ({ year, month, day }: CalendarDate): WeekDay => {
   return weekDays[mod(diff, 7)];
 };
 
-export const addCalendarMonths = (
+export const addMonths = (
   { year, month }: CalendarMonth,
   months: number,
 ): CalendarMonth => {
@@ -91,29 +91,26 @@ export const addCalendarMonths = (
  * Returns a new `CalendarDate` object, `daysToAdd` (integer) number of days in the future (or past if negative).
  * Always retunrs a new (instance of) an object, even if you try to add `0` days.
  */
-export const addCalendarDays = (
+export const addDays = (
   { year, month, day }: CalendarDate,
   daysToAdd: number,
 ): CalendarDate => {
   const daysInMonth = numberOfDaysInMonth({ year, month });
   if (day > daysInMonth) {
-    return addCalendarDays(
-      { year, month, day: daysInMonth },
-      day - daysInMonth,
-    );
+    return addDays({ year, month, day: daysInMonth }, day - daysInMonth);
   }
   if (day < 0) {
-    return addCalendarDays({ year, month, day: 0 }, day);
+    return addDays({ year, month, day: 0 }, day);
   }
   if (day === 0 && daysToAdd === 0) {
-    const prevMonth = addCalendarMonths({ year, month }, -1);
+    const prevMonth = addMonths({ year, month }, -1);
     return {
       ...prevMonth,
       day: numberOfDaysInMonth(prevMonth),
     };
   }
   if (daysToAdd === 0) {
-    return addCalendarDays({ year, month, day: 0 }, day);
+    return addDays({ year, month, day: 0 }, day);
   }
 
   // daysToAdd cannot be 0
@@ -129,8 +126,8 @@ export const addCalendarDays = (
         day: day - daysToRemove,
       };
     } else {
-      const prevMonth = addCalendarMonths({ year, month }, -1);
-      return addCalendarDays(
+      const prevMonth = addMonths({ year, month }, -1);
+      return addDays(
         {
           ...prevMonth,
           day: numberOfDaysInMonth(prevMonth),
@@ -145,8 +142,8 @@ export const addCalendarDays = (
     if (daysToAdd <= daysLeftInMonth) {
       return { year, month, day: day + daysToAdd };
     } else {
-      return addCalendarDays(
-        { ...addCalendarMonths({ year, month }, 1), day: 0 },
+      return addDays(
+        { ...addMonths({ year, month }, 1), day: 0 },
         daysToAdd - daysLeftInMonth,
       );
     }
@@ -161,7 +158,7 @@ export const addCalendarDays = (
  * Low level implementation of `a < b` for `CalendarMonth`.
  * There might exist a more appropriate function for your usecase.
  */
-export const calendarMonthLessThan = (a: CalendarMonth, b: CalendarMonth) => {
+export const isMonthBefore = (a: CalendarMonth, b: CalendarMonth) => {
   if (a.year < b.year) {
     return true;
   }
@@ -175,18 +172,18 @@ export const calendarMonthLessThan = (a: CalendarMonth, b: CalendarMonth) => {
  * Low level implementation of `a == b` for `CalendarMonth`.
  * There might exist a more appropriate function for your usecase.
  */
-export const calendarMonthsEqual = (a: CalendarMonth, b: CalendarMonth) =>
-  !calendarMonthLessThan(a, b) && !calendarMonthLessThan(b, a);
+export const monthsEqual = (a: CalendarMonth, b: CalendarMonth) =>
+  !isMonthBefore(a, b) && !isMonthBefore(b, a);
 
 /**
  * Low level implementation of `a < b` for `CalendarDate`.
  * You probably want `isInOrder(a,b)`.
  */
-export const calendarDateLessThan = (a: CalendarDate, b: CalendarDate) => {
-  if (calendarMonthLessThan(a, b)) {
+export const isDateBefore = (a: CalendarDate, b: CalendarDate) => {
+  if (isMonthBefore(a, b)) {
     return true;
   }
-  if (calendarMonthsEqual(a, b)) {
+  if (monthsEqual(a, b)) {
     if (a.day < b.day) {
       return true;
     }
@@ -199,8 +196,8 @@ export const calendarDateLessThan = (a: CalendarDate, b: CalendarDate) => {
  * You might want `isInOrder(a,b)`, but this is the correct function if you
  * want to test two dates for equality.
  */
-export const calendarDatesEqual = (a: CalendarDate, b: CalendarDate) =>
-  !calendarDateLessThan(b, a) && !calendarDateLessThan(b, a);
+export const datesEqual = (a: CalendarDate, b: CalendarDate) =>
+  !isDateBefore(b, a) && !isDateBefore(b, a);
 
 //
 // Library functions
@@ -213,12 +210,13 @@ export const calendarDatesEqual = (a: CalendarDate, b: CalendarDate) =>
  * Example: `Jan 1, Jan 2, Jan 2, Jan 3` => `true`
  *
  * This is useful if you want to know if two dates `a` and `b` come after
- * each other, as in `areInOrder(a,b)`, but also if you want to know
- * if the date `c` is "between" `a` and `b`: `areInOrder(a,c,b)`.
+ * each other, as in `areInOrder(a,b)` (which is equivalent to a <= b),
+ * but also if you want to know if the date `c` is "between"
+ * `a` and `b`: `areInOrder(a,c,b)` (which is equivalent to a <= c <= b).
  */
 export const areInOrder = (...dates: CalendarDate[]): boolean => {
   const lteq = (a: CalendarDate, b: CalendarDate) =>
-    calendarDateLessThan(a, b) || calendarDatesEqual(a, b);
+    isDateBefore(a, b) || datesEqual(a, b);
   if (dates.length <= 1) {
     return true;
   }
@@ -230,34 +228,30 @@ export const areInOrder = (...dates: CalendarDate[]): boolean => {
 };
 
 /**
- * Similar to `numberOfCalendarDaysBetween`, except it only takes months
+ * Similar to `numberOfDaysBetween`, except it only takes months
  * into account. You can pass in `CalendarDate` objects; only the month part
  * is taken into account.
  * It calculates the number of months `end - start`.
  */
-export const numberOfCalendarMonthsBetween = ({
-  start,
-  end,
+export const numberOfMonthsBetween = ({
+  start: a,
+  end: b,
 }: {
   start: CalendarMonth;
   end: CalendarMonth;
 }): number => {
   const lteq = (a: CalendarMonth, b: CalendarMonth) =>
-    calendarMonthLessThan(a, b)
-      ? 'lt'
-      : calendarMonthsEqual(a, b)
-      ? 'eq'
-      : 'gt';
-  const n = solve((n) => lteq(addCalendarMonths(start, n), end));
+    isMonthBefore(a, b) ? 'lt' : monthsEqual(a, b) ? 'eq' : 'gt';
+  const n = solve((n) => lteq(addMonths(a, n), b));
   return n;
 };
 
 /**
- * The opposite of `addCalendarDays`, in a sense it works like subtraction.
+ * The opposite of `addDays`, in a sense it works like subtraction.
  * The result is `end - start`. This means that calling it with
  * the same date for `start` and `end` gives 0.
  */
-export const numberOfCalendarDaysBetween = ({
+export const numberOfDaysBetween = ({
   start: a,
   end: b,
 }: {
@@ -265,8 +259,8 @@ export const numberOfCalendarDaysBetween = ({
   end: CalendarDate;
 }): number => {
   const lteq = (a: CalendarDate, b: CalendarDate) =>
-    calendarDateLessThan(a, b) ? 'lt' : calendarDatesEqual(a, b) ? 'eq' : 'gt';
-  const n = solve((n) => lteq(addCalendarDays(a, n), b));
+    isDateBefore(a, b) ? 'lt' : datesEqual(a, b) ? 'eq' : 'gt';
+  const n = solve((n) => lteq(addDays(a, n), b));
   return n;
 };
 
@@ -289,14 +283,14 @@ export const lastDateInMonth = ({
  * Returns a list of all `CalendarDate`s from `a` up to and including `b`, in sequence.
  * This means it's an inclusive range in both ends. If `b` comes before `a` you get an empty list.
  */
-export const periodOfCalendarDates = (
+export const periodOfDates = (
   a: CalendarDate,
   b: CalendarDate,
 ): CalendarDate[] => {
-  if (calendarDateLessThan(b, a)) {
+  if (isDateBefore(b, a)) {
     return [];
   }
-  return [a, ...periodOfCalendarDates(addCalendarDays(a, 1), b)];
+  return [a, ...periodOfDates(addDays(a, 1), b)];
 };
 
 /**
@@ -305,12 +299,12 @@ export const periodOfCalendarDates = (
  * This means it's an inclusive range in both ends. If `b` comes before `a` you get an empty list.
  * You can pass in `CalendarDate` objects if you'd like.
  */
-export const periodOfCalendarMonths = (
+export const periodOfMonths = (
   a: CalendarMonth,
   b: CalendarMonth,
 ): CalendarMonth[] => {
-  if (calendarMonthLessThan(b, a)) {
+  if (isMonthBefore(b, a)) {
     return [];
   }
-  return [a, ...periodOfCalendarMonths(addCalendarMonths(a, 1), b)];
+  return [a, ...periodOfMonths(addMonths(a, 1), b)];
 };
