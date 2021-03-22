@@ -5,6 +5,7 @@ export {
   numberOfDaysInMonth,
   addDays,
   addMonths,
+  areInOrder,
   isMonthBefore,
   monthsEqual,
   isDateBefore,

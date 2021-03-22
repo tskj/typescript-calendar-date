@@ -180,16 +180,14 @@ const endOfNextMonth = { ...nextMonth, day: numberOfDaysInMonth(nextMonth) };
 
 You might also want to keep the day which the original `CalendarDate` has, but be careful that this next month might have fewer days than that - check with `numberOfDaysInMonth`. You can of course also just add 30 days using `addDays` if you want, but that isn't exactly the same as adding a month. It all depends on your usecase of course.
 
-### addMonths
+### isMonthBefore
 
 ```typescript
-const addMonths: ({ year, month }: CalenarMonth, n: number) => CalendarMonth;
+const isMonthBefore: (a: CalendarMonth, b: CalendarMonth) => boolean;
 ```
 
-Let's you add `n` number of months to a `CalendarMonth`, giving you a new `CalendarMonth`. This is an example where you can pass in a `CalendarDate`. Note that this is an example of where you'd pass in a `CalendarDate`, which is a subtype of `CalendarMonth`. This is also the only way to add a number of months to a date. It might seem annoying to get out a `CalendarMonth` from this, because you probably want a `CalendarDate`. The way to deal with this is to then convert this value to a `CalendarDate` buy specifying what exactly you want. For instance, you might want to the first of the month, in which case you just specify `day` to be `1`, as shown in the example below. If you want the last of the month, set it to `numberOfDaysInMonth`, explained above.
+Basically implements `a < b` for months, tests whether `a` comes strictly before `b`. This function can be used readily with `CalendarDate`s, if you only care about the months they belong to.
 
 ```typescript
-const nextMonth = addMonths(today, 1);
-const firstOfNextMonth = { ...nextMonth, day: 1 };
-const endOfNextMonth = { ...nextMonth, day: numberOfDaysInMonth(nextMonth) };
+isMonthBefore(today, tomorrow); // true if tomorrow is the first of the next month, false otherwise.
 ```
