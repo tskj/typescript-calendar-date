@@ -180,6 +180,21 @@ const endOfNextMonth = { ...nextMonth, day: numberOfDaysInMonth(nextMonth) };
 
 You might also want to keep the day which the original `CalendarDate` has, but be careful that this next month might have fewer days than that - check with `numberOfDaysInMonth`. You can of course also just add 30 days using `addDays` if you want, but that isn't exactly the same as adding a month. It all depends on your usecase of course.
 
+### areInOrder
+
+```typescript
+const areInOrder: (...dates: CalendarDate[]) => boolean;
+```
+
+The signature of this function seems maybe more complicated than it is. This function is meant to be used to test whether you have dates "in order". If you have two dates, `a` and `b`, you can check if one comes before the other, which is essentially `a <= b`. But his function is also variadic, you can pass in any number of dates, in which case it evaluates to true if they are ordered in a monotonically increasing order. This is very useful if you want to test whether a third date, say `c`, is "in range of" `a` and `b`, which is essentially `a <= c <= b`.
+
+Dates are considered to be in order if `a` comes before or is the same date as `b`.
+
+```typescript
+areInOrder(today, tomorrow); // true
+areInOrder(firstOfMonth, someDate, lastOfMonth); // true if `someDate` is in this month
+```
+
 ### isMonthBefore
 
 ```typescript
@@ -190,4 +205,140 @@ Basically implements `a < b` for months, tests whether `a` comes strictly before
 
 ```typescript
 isMonthBefore(today, tomorrow); // true if tomorrow is the first of the next month, false otherwise.
+```
+
+### monthsEqual
+
+```typescript
+const monthsEqual: (a: CalendarMonth, b: CalendarMonth) => boolean;
+```
+
+Basically implements `a = b` for months, tests whether `a` represents the same month as `b`. This function can be used readily with `CalendarDate`s, for instance if you want to test whether two dates appear in the same month (and year!). If you *only* care whether they both appear in say December, but don't care whether those are in different years, just check `a.month === b.month` manually.
+
+```typescript
+monthsEqual(today, tomorrow); // true if tomorrow is not the first of the month
+```
+
+### isDateBefore
+
+```typescript
+const isDateBefore: (a: CalendarDate, b: CalendarDate) => boolean;
+```
+
+Basically implements `a < b` for dates, tests whether `a` comes strictly before `b`. Maybe you want `areInOrder`, the difference between `areInOrder(a,b)` and `isDateBefore` is that the latter is "strictly less than", while `areInOrder` accepts equal dates as well. For most usecases I think `areInOrder` is probably what you actually want, but this is available if you need it.
+
+```typescript
+isDateBefore(today, tomorrow); // true
+```
+
+### datesEqual
+
+```typescript
+const datesEqual: (a: CalendarDate, b: CalendarDate) => boolean;
+```
+
+Basically implements `a = b` for dates, tests whether `a` represents the same date as `b`. Only exists because JavaScript `===` is reference equality, which is mostly not what you want.
+
+```typescript
+datesEqual(a, b); 
+```
+
+### numberOfMonthsBetween
+
+```typescript
+const numberOfMonthsBetween: ({ start, end }) => number;
+```
+
+Calculates the number of months between `start` and `end`, both of type `CalendarMonth`. This is an example of where you can pass in `CalendarDate`s if you only care about the month part. This essentially implements `end - start`; if `start` and `end` represent January and February in the same year, respectively, it evaluates to `1`. If you pass in the same month, it evaluates to `0`. If `end` comes before `start`, you get a negative number.
+
+```typescript
+numberOfMonthsBetween({ start: startOfYear, end: endOfYear }); // 11
+```
+
+### numberOfDaysBetween
+
+```typescript
+const numberOfDaysBetween: ({ start, end }) => number;
+```
+
+Calculates the number of days between `start` and `end`, both of type `CalendarDate`. This essentially implements `end - start`; if `start` and `end` represent today and tomorrow, respectively, it evaluates to `1`. If you pass in the same date, it evaluates to `0`. If `end` comes before `start`, you get a negative number.
+
+```typescript
+numberOfDaysBetween({ start: firstDayOfYear, end: lastDayOfYear }); // 364 or 365, depending on leap year
+
+const firstDayOfNextYear =  { ...firstDayOfYear, year: firstDayOfYear.year + 1 };
+numberOfDaysBetween({ start: firstDayOfYear , end: firstDayOfNextYear }); // 365 or 366, depending on leap year
+```
+
+### dayOfWeek
+
+```typescript
+type WeekDay = 'mon' | 'tue' | 'wed' ...
+const dayOfWeek: ({ year, month, day }: CalendarDate) => WeekDay;
+```
+
+Returns a three letter abbreviation of the day of week the `CalendarDate` represents. Think of this string as an enum, the idea is that you write a formating function or otherwise transform this string into a useable format.
+
+```typescript
+const isWeekend = dayOfWeek(today) === 'sat' || dayOfWeek(today) === 'sun';
+```
+
+### lastDateInMonth
+
+```typescript
+const lastDateInMonth: ({ year, month }: CalendarMonth) => CalendarDate;
+```
+
+Gives the last date of the month you give it, whether that is a `CalendarDate` (in which case you get a different, that is the last, date in that month) or just a `CalendarMonth`. This function is implemented by setting the `day` to the last day of the month, calculated using `numberOfDaysInMonth`.
+
+```typescript
+const firstOfNextMonth = addDays(lastDateInMonth(today), 1); // Hack to easily get next month's first date?
+```
+
+### periodOfDates
+
+```typescript
+const periodOfDates: (a: CalendarDate, b: CalendarDate) => CalendarDate[];
+```
+
+Produces a list of `CalendarDate`s from `a` upto and including `b`. The result is an ordered list of sequential dates. The range is inclusive in both ends.
+
+```typescript
+const allDatesInMonth = periodOfDates(firstOfMonth, lastOfMonth);
+```
+
+### periodOfMonths
+
+```typescript
+const periodOfMonths: (a: CalendarMonth, b: CalendarMonth) => CalendarMonth[];
+```
+
+Produces a list of `CalendarMonth`s from `a` upto and including `b`. The result is an ordered list of sequential months. The range is inclusive in both ends. This is also a function where you can pass in a `CalendarDate`.
+
+```typescript
+const allMonthsInYear = periodOfMonth(firstOfYear, lastOfYear);
+```
+
+### monthName
+
+```typescript
+const monthName: (n: number) => Month;
+```
+
+Used to generate the three letter abbreviation of the month, such as `'jan'` for `1`. One indexed, in other words. This function wraps around, allowing you to pass in values greater than 12 (although I'm not sure why you would).
+
+```typescript
+const january = monthName(1);
+```
+
+### monthNumber
+
+```typescript
+const monthNumber: (m: Month) => number;
+```
+
+Used to produce the number of the month based on the three letter abbreviation. This is actually typed in such a way that you cannot send in just any string, it has to match one of the months.
+
+```typescript
+const january = monthNumber('jan'); // 1
 ```
