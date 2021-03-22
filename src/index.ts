@@ -16,4 +16,4 @@ export {
   periodOfDates,
   periodOfMonths,
 } from './calendar-date';
-export { monthName } from './consts';
+export { monthName, monthNumber } from './consts';
