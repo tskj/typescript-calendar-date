@@ -30,7 +30,7 @@ export const isLeapYear = ({ year }: CalendarYear) => {
   return false;
 };
 
-export const numberOfDaysInMonth = ({ year, month }: CalendarMonth): Day => {
+export const numberOfDaysInMonth = ({ year, month }: CalendarMonth): number => {
   switch (month) {
     case 'jan':
       return 31;

@@ -1,3 +1,5 @@
+import { mod } from './utils';
+
 export type Year = number;
 
 export type Month =
@@ -27,6 +29,25 @@ export const weekDays: WeekDay[] = [
   'sun',
 ];
 
+const months: Month[] = [
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+];
+
+/**
+ * Tells you the number of the month; one indexed like the real world.
+ * That is, January is the first month, i.e. 1 and December 12.
+ */
 export const monthNumber = (month: Month): number => {
   switch (month) {
     case 'jan':
@@ -56,19 +77,13 @@ export const monthNumber = (month: Month): number => {
   }
 };
 
-const months: Month[] = [
-  'jan',
-  'feb',
-  'mar',
-  'apr',
-  'may',
-  'jun',
-  'jul',
-  'aug',
-  'sep',
-  'oct',
-  'nov',
-  'dec',
-];
-
-export const monthName = (n: number): Month => months[n - 1];
+/**
+ * Converts the month number, i.e. `1`, to the "name" of the month,
+ * in this case `'jan'`. These `Month` abbreviated month names are what
+ * this library understands.
+ *
+ * This input parameter wraps around, if you pass it `13`, that is
+ * also `'jan'`
+ */
+export const monthName = (n: number): Month =>
+  months[mod(n - 1, months.length)];

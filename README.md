@@ -113,3 +113,83 @@ const datesInQ1 = periodOfDates(startOfQ1, endOfQ1); // : CalendarDate[]
 ```
 
 This function has an inclusive range in both ends for convenience, as this is what most people want most of the time when writing code like this.
+
+## Docs
+
+### CalendarYear
+
+```typescript
+type CalendarYear = { year: number };
+```
+
+This is the most basic type in this library, mostly used to build upon by `CalendarMonth` and `CalendarDate`.
+
+### CalendarMonth
+
+```typescript
+type Month = 'jan' | 'feb' | 'mar' ...
+type CalendarMonth = { year: number, month: Month };
+```
+
+`Month` is a union of the 12 abbreviated strings representing the 12 months. Think of this as an enum. You can convert between `Month` and its month number using the functions `monthNumber` and `monthName`. This is mostly done for readability when debugging and leaving no question whether it is zero or one indexed.
+
+`CalendarMonth` is a subtype of `CalendarYear`, and can be used anywhere `CalendarYear` can.
+
+### CalendarDate
+
+```typescript
+type CalendarDate = { year: number, month: Month, day: number };
+```
+
+`CalendarDate` is the heart of this library, and is a subtype of `CalendarMonth`. A `CalendarDate` can be used anywhere where a `CalendarMonth` is expected. It is expected that you construct a value of this type manually at the edges of your program, which is why it's such a simple type. It's also expected you write some kind of formatting function (or many!) to display values of these types to your users.
+
+### numberOfDaysInMonth
+
+```typescript
+const numberOfDaysInMonth: ({ year, month }: CalendarMonth) => number;
+```
+
+Gives you the number of days in that month, 28, 29, 30, or 31. Because of leap years you need to provide an entire `CalendarMonth` object which includes the year, not just the month, to get a correct answer. Here is an example of where you can send in a `CalendarDate` and get the expected result.
+
+### addDays
+
+```typescript
+const addDays: ({ year, month, day }: CalendarDate, n: number) => CalendarDate;
+```
+
+Let's you `n` number of days to a `CalendarDate`, which gives you a new `CalendarDate` `n` dates in the future or the past. If you pass `n = 0` you get a new `CalendarDate` object which is identical to the one you pass in. You can add thousands of days if you wish, this functions handles all leap years and all of that.
+
+```typescript
+const yesterday = addDays(today, -1);
+const tomorrow = addDays(today, 1);
+```
+
+### addMonths
+
+```typescript
+const addMonths: ({ year, month }: CalenarMonth, n: number) => CalendarMonth;
+```
+
+Let's you add `n` number of months to a `CalendarMonth`, giving you a new `CalendarMonth`. This is an example where you can pass in a `CalendarDate`. Note that this is an example of where you'd pass in a `CalendarDate`, which is a subtype of `CalendarMonth`. This is also the only way to add a number of months to a date. It might seem annoying to get out a `CalendarMonth` from this, because you probably want a `CalendarDate`. The way to deal with this is to then convert this value to a `CalendarDate` buy specifying what exactly you want. For instance, you might want to the first of the month, in which case you just specify `day` to be `1`, as shown in the example below. If you want the last of the month, set it to `numberOfDaysInMonth`, explained above.
+
+```typescript
+const nextMonth = addMonths(today, 1);
+const firstOfNextMonth = { ...nextMonth, day: 1 };
+const endOfNextMonth = { ...nextMonth, day: numberOfDaysInMonth(nextMonth) };
+```
+
+You might also want to keep the day which the original `CalendarDate` has, but be careful that this next month might have fewer days than that - check with `numberOfDaysInMonth`. You can of course also just add 30 days using `addDays` if you want, but that isn't exactly the same as adding a month. It all depends on your usecase of course.
+
+### addMonths
+
+```typescript
+const addMonths: ({ year, month }: CalenarMonth, n: number) => CalendarMonth;
+```
+
+Let's you add `n` number of months to a `CalendarMonth`, giving you a new `CalendarMonth`. This is an example where you can pass in a `CalendarDate`. Note that this is an example of where you'd pass in a `CalendarDate`, which is a subtype of `CalendarMonth`. This is also the only way to add a number of months to a date. It might seem annoying to get out a `CalendarMonth` from this, because you probably want a `CalendarDate`. The way to deal with this is to then convert this value to a `CalendarDate` buy specifying what exactly you want. For instance, you might want to the first of the month, in which case you just specify `day` to be `1`, as shown in the example below. If you want the last of the month, set it to `numberOfDaysInMonth`, explained above.
+
+```typescript
+const nextMonth = addMonths(today, 1);
+const firstOfNextMonth = { ...nextMonth, day: 1 };
+const endOfNextMonth = { ...nextMonth, day: numberOfDaysInMonth(nextMonth) };
+```
