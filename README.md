@@ -116,6 +116,8 @@ This function has an inclusive range in both ends for convenience, as this is wh
 
 ## Docs
 
+-------------------
+
 ### CalendarYear
 
 ```typescript
@@ -123,6 +125,8 @@ type CalendarYear = { year: number };
 ```
 
 This is the most basic type in this library, mostly used to build upon by `CalendarMonth` and `CalendarDate`.
+
+-------------------
 
 ### CalendarMonth
 
@@ -135,6 +139,8 @@ type CalendarMonth = { year: number, month: Month };
 
 `CalendarMonth` is a subtype of `CalendarYear`, and can be used anywhere `CalendarYear` can.
 
+-------------------
+
 ### CalendarDate
 
 ```typescript
@@ -143,6 +149,8 @@ type CalendarDate = { year: number, month: Month, day: number };
 
 `CalendarDate` is the heart of this library, and is a subtype of `CalendarMonth`. A `CalendarDate` can be used anywhere where a `CalendarMonth` is expected. It is expected that you construct a value of this type manually at the edges of your program, which is why it's such a simple type. It's also expected you write some kind of formatting function (or many!) to display values of these types to your users.
 
+-------------------
+
 ### numberOfDaysInMonth
 
 ```typescript
@@ -150,6 +158,8 @@ const numberOfDaysInMonth: ({ year, month }: CalendarMonth) => number;
 ```
 
 Gives you the number of days in that month, 28, 29, 30, or 31. Because of leap years you need to provide an entire `CalendarMonth` object which includes the year, not just the month, to get a correct answer. Here is an example of where you can send in a `CalendarDate` and get the expected result.
+
+-------------------
 
 ### addDays
 
@@ -163,6 +173,8 @@ Let's you `n` number of days to a `CalendarDate`, which gives you a new `Calenda
 const yesterday = addDays(today, -1);
 const tomorrow = addDays(today, 1);
 ```
+
+-------------------
 
 ### addMonths
 
@@ -180,6 +192,8 @@ const endOfNextMonth = { ...nextMonth, day: numberOfDaysInMonth(nextMonth) };
 
 You might also want to keep the day which the original `CalendarDate` has, but be careful that this next month might have fewer days than that - check with `numberOfDaysInMonth`. You can of course also just add 30 days using `addDays` if you want, but that isn't exactly the same as adding a month. It all depends on your usecase of course.
 
+-------------------
+
 ### areInOrder
 
 ```typescript
@@ -195,6 +209,8 @@ areInOrder(today, tomorrow); // true
 areInOrder(firstOfMonth, someDate, lastOfMonth); // true if `someDate` is in this month
 ```
 
+-------------------
+
 ### isMonthBefore
 
 ```typescript
@@ -206,6 +222,8 @@ Basically implements `a < b` for months, tests whether `a` comes strictly before
 ```typescript
 isMonthBefore(today, tomorrow); // true if tomorrow is the first of the next month, false otherwise.
 ```
+
+-------------------
 
 ### monthsEqual
 
@@ -219,6 +237,8 @@ Basically implements `a = b` for months, tests whether `a` represents the same m
 monthsEqual(today, tomorrow); // true if tomorrow is not the first of the month
 ```
 
+-------------------
+
 ### isDateBefore
 
 ```typescript
@@ -230,6 +250,8 @@ Basically implements `a < b` for dates, tests whether `a` comes strictly before 
 ```typescript
 isDateBefore(today, tomorrow); // true
 ```
+
+-------------------
 
 ### datesEqual
 
@@ -243,6 +265,9 @@ Basically implements `a = b` for dates, tests whether `a` represents the same da
 datesEqual(a, b); 
 ```
 
+-------------------
+
+
 ### numberOfMonthsBetween
 
 ```typescript
@@ -254,6 +279,8 @@ Calculates the number of months between `start` and `end`, both of type `Calenda
 ```typescript
 numberOfMonthsBetween({ start: startOfYear, end: endOfYear }); // 11
 ```
+
+-------------------
 
 ### numberOfDaysBetween
 
@@ -270,6 +297,8 @@ const firstDayOfNextYear =  { ...firstDayOfYear, year: firstDayOfYear.year + 1 }
 numberOfDaysBetween({ start: firstDayOfYear , end: firstDayOfNextYear }); // 365 or 366, depending on leap year
 ```
 
+-------------------
+
 ### dayOfWeek
 
 ```typescript
@@ -283,6 +312,8 @@ Returns a three letter abbreviation of the day of week the `CalendarDate` repres
 const isWeekend = dayOfWeek(today) === 'sat' || dayOfWeek(today) === 'sun';
 ```
 
+-------------------
+
 ### lastDateInMonth
 
 ```typescript
@@ -294,6 +325,8 @@ Gives the last date of the month you give it, whether that is a `CalendarDate` (
 ```typescript
 const firstOfNextMonth = addDays(lastDateInMonth(today), 1); // Hack to easily get next month's first date?
 ```
+
+-------------------
 
 ### periodOfDates
 
@@ -307,6 +340,8 @@ Produces a list of `CalendarDate`s from `a` upto and including `b`. The result i
 const allDatesInMonth = periodOfDates(firstOfMonth, lastOfMonth);
 ```
 
+-------------------
+
 ### periodOfMonths
 
 ```typescript
@@ -319,6 +354,8 @@ Produces a list of `CalendarMonth`s from `a` upto and including `b`. The result 
 const allMonthsInYear = periodOfMonth(firstOfYear, lastOfYear);
 ```
 
+-------------------
+
 ### monthName
 
 ```typescript
@@ -330,6 +367,8 @@ Used to generate the three letter abbreviation of the month, such as `'jan'` for
 ```typescript
 const january = monthName(1);
 ```
+
+-------------------
 
 ### monthNumber
 
