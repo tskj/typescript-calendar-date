@@ -197,7 +197,7 @@ export const isDateBefore = (a: CalendarDate, b: CalendarDate) => {
  * want to test two dates for equality.
  */
 export const datesEqual = (a: CalendarDate, b: CalendarDate) =>
-  !isDateBefore(b, a) && !isDateBefore(b, a);
+  !isDateBefore(a, b) && !isDateBefore(b, a);
 
 //
 // Library functions
