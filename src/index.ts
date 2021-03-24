@@ -16,5 +16,8 @@ export {
   lastDateInMonth,
   periodOfDates,
   periodOfMonths,
+  startOfWeek,
+  isWeekend,
 } from './calendar-date';
 export { monthName, monthNumber } from './consts';
+export { parseIso8601String, serializeIso8601String } from './io';

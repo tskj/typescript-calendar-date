@@ -308,3 +308,16 @@ export const periodOfMonths = (
   }
   return [a, ...periodOfMonths(addMonths(a, 1), b)];
 };
+
+export const startOfWeek = (
+  date: CalendarDate,
+  { firstDayOfWeek }: { firstDayOfWeek: WeekDay } = { firstDayOfWeek: 'mon' },
+): CalendarDate => {
+  if (dayOfWeek(date) === firstDayOfWeek) {
+    return date;
+  }
+  return startOfWeek(addDays(date, -1), { firstDayOfWeek });
+};
+
+export const isWeekend = (date: CalendarDate) =>
+  dayOfWeek(date) === 'sat' || dayOfWeek(date) === 'sun';
