@@ -24,7 +24,7 @@ test('Difference in days', () => {
       (day, days) => {
         const laterDay = addDays(day, days);
         const diff = numberOfDaysBetween({ start: day, end: laterDay });
-        expect(diff).toBe(days);
+        expect(diff).toBe(days + 1);
       },
     ),
   );
