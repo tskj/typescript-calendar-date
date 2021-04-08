@@ -5,7 +5,10 @@
 _Zero-depenency, small, immutable library favouring excplicitness, for handling calendar dates **correctly**._
 
 ![AppVeyor](https://img.shields.io/appveyor/build/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
+![AppVeyor](https://img.shields.io/appveyor/tests/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
 ![License](https://img.shields.io/github/license/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/typescript-calendar-date?style=for-the-badge&logo=appveyor)
+![npm](https://img.shields.io/npm/v/typescript-calendar-date?style=for-the-badge&logo=appveyor&color=yellow)
 
 `typescript-calendar-date` works on objects like `{ year: 2021, month: 'jan', day: 1 }` which you can easily construct and destructure anywhere in your app. 
 The library provides a small set of powerful functions which are simple to understand and use. It gives you the exact level of control you feel you need when working with dates (no more guessing and feeling of uncertainty about off by one mistakes), and handles all the complexity you don't care about. No more date bugs!
