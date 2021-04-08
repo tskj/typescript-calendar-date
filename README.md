@@ -5,7 +5,6 @@
 _Zero-depenency, small, immutable library favouring excplicitness, for handling calendar dates **correctly**._
 
 ![AppVeyor](https://img.shields.io/appveyor/build/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
-![AppVeyor](https://img.shields.io/appveyor/tests/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
 ![License](https://img.shields.io/github/license/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/typescript-calendar-date?style=for-the-badge&logo=appveyor)
 ![npm](https://img.shields.io/npm/v/typescript-calendar-date?style=for-the-badge&logo=appveyor&color=yellow)
