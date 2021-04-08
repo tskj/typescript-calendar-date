@@ -1,7 +1,6 @@
 import fc from 'fast-check';
 import {
   addDays,
-  CalendarDate,
   monthName,
   numberOfDaysBetween,
   numberOfDaysInMonth,
