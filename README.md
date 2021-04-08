@@ -3,9 +3,9 @@
 #
 
 ![AppVeyor](https://img.shields.io/appveyor/build/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
-![License](https://img.shields.io/github/license/tskj/typescript-calendar-date?style=for-the-badge&logo=appveyor)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/typescript-calendar-date?style=for-the-badge&logo=appveyor)
-![npm](https://img.shields.io/npm/v/typescript-calendar-date?style=for-the-badge&logo=appveyor&color=yellow)
+![License](https://img.shields.io/github/license/tskj/typescript-calendar-date?style=for-the-badge)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/typescript-calendar-date?style=for-the-badge&logo=shields.io)
+![npm](https://img.shields.io/npm/v/typescript-calendar-date?style=for-the-badge&logo=npm&color=yellow)
 
 _Zero-depenency, small, immutable library favouring excplicitness, for handling calendar dates **correctly**._
 
