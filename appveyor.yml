@@ -1,4 +1,6 @@
+install:
+  - ps: Install-Product node "14.2.0"
+  - npm i
 test: off
 build_script:
-  - npm i
   - npm run test
