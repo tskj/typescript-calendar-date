@@ -1,3 +1,4 @@
 test: off
 build_script:
+  - npm i
   - npm run test
