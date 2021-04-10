@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
+    "watch-tests": "jest --watch",
     "build": "tsc",
     "start": "tsc-watch --onSuccess 'node dist/tests.js'",
     "prepublishOnly": "npm run build && git push && git push --tags"
@@ -53,7 +54,7 @@
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
     "testMatch": [
-      "**/specs/*.+(ts|tsx|js)"
+      "**/specs/*.tests.+(ts|tsx|js)"
     ]
   }
 }
