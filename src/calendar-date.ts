@@ -313,10 +313,19 @@ export const periodOfDates = (
   a: CalendarDate,
   b: CalendarDate,
 ): CalendarDate[] => {
-  if (isDateBefore(b, a)) {
-    return [];
-  }
-  return [a, ...periodOfDates(addDays(a, 1), b)];
+  const periodOfDatesRec: (
+    a: CalendarDate,
+    b: CalendarDate,
+    acc: CalendarDate[],
+  ) => CalendarDate[] = trampoline(
+    (a: CalendarDate, b: CalendarDate, acc: CalendarDate[]) => {
+      if (isDateBefore(b, a)) {
+        return { recurse: false, return: acc };
+      }
+      return { recurse: true, params: [addDays(a, 1), b, [...acc, a]] };
+    },
+  );
+  return periodOfDatesRec(a, b, []);
 };
 
 /**

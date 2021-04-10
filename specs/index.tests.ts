@@ -3,21 +3,18 @@ import {
   addDays,
   CalendarDate,
   numberOfDaysBetween,
-  periodOfDates,
-} from '../src';
-import {
-  areInOrder,
-  CalendarMonth,
-  isLeapYear,
   numberOfDaysInMonth,
-} from '../src/calendar-date';
+  periodOfDates,
+  isLeapYear,
+  areInOrder,
+} from '../src';
 import { fcCalendarDate } from './generators';
 
 test('Difference in days', () => {
   fc.assert(
     fc.property(
       fcCalendarDate(),
-      fc.integer(-200 * 365, 200 * 365),
+      fc.integer(-2000 * 365, 2000 * 365),
       (date, days) => {
         const laterDay = addDays(date, days);
         const diff = numberOfDaysBetween({ start: date, end: laterDay });
@@ -63,13 +60,40 @@ test('Number of days in month', () => {
   );
 });
 
-test('Are in order has positive diff', () => {
+test('Are-in-order has positive diff', () => {
   fc.assert(
     fc.property(fcCalendarDate(), fcCalendarDate(), (a, b) => {
       const areOrdered = areInOrder(a, b);
       const diff = numberOfDaysBetween({ start: a, end: b });
       const negativeDiff = diff < 0;
       expect(!areOrdered).toBe(negativeDiff);
+    }),
+  );
+});
+
+test('Normalization works', () => {
+  fc.assert(
+    fc.property(
+      fcCalendarDate(),
+      fc.integer(-100 * 365, 100 * 365),
+      (date, n) => {
+        const otherDate = addDays(date, n);
+        const sameOtherDate = addDays({ ...date, day: date.day + n }, 0);
+        expect(otherDate).toEqual(sameOtherDate);
+      },
+    ),
+  );
+});
+
+test('Period of dates has correct number of days', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), fcCalendarDate(), (a, b) => {
+      const daysBetween = numberOfDaysBetween({ start: a, end: b }) + 1;
+      if (Math.abs(daysBetween) > 2000) {
+        return;
+      }
+      const allDaysInPeriod = periodOfDates(a, b);
+      expect(allDaysInPeriod.length).toBe(Math.max(daysBetween, 0));
     }),
   );
 });
