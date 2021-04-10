@@ -7,7 +7,7 @@ import {
   weekDays,
   Year,
 } from './consts';
-import { mod, solve } from './utils';
+import { mod, solve, trampoline } from './utils';
 
 //
 // Foundations
@@ -91,64 +91,90 @@ export const addMonths = (
  * Returns a new `CalendarDate` object, `daysToAdd` (integer) number of days in the future (or past if negative).
  * Always retunrs a new (instance of) an object, even if you try to add `0` days.
  */
-export const addDays = (
-  { year, month, day }: CalendarDate,
-  daysToAdd: number,
-): CalendarDate => {
-  const daysInMonth = numberOfDaysInMonth({ year, month });
-  if (day > daysInMonth) {
-    return addDays({ year, month, day: daysInMonth }, day - daysInMonth);
-  }
-  if (day < 0) {
-    return addDays({ year, month, day: 0 }, day);
-  }
-  if (day === 0 && daysToAdd === 0) {
-    const prevMonth = addMonths({ year, month }, -1);
-    return {
-      ...prevMonth,
-      day: numberOfDaysInMonth(prevMonth),
-    };
-  }
-  if (daysToAdd === 0) {
-    return addDays({ year, month, day: 0 }, day);
-  }
-
-  // daysToAdd cannot be 0
-  // day has to be 0 or [1, daysInMonth] (inclusive)
-
-  if (daysToAdd < 0) {
-    // daysToRemove is a positive number
-    const daysToRemove = -daysToAdd;
-    if (daysToRemove < day) {
+export const addDays: (
+  date: CalendarDate,
+  n: number,
+) => CalendarDate = trampoline(
+  ({ year, month, day }: CalendarDate, daysToAdd: number) => {
+    const daysInMonth = numberOfDaysInMonth({ year, month });
+    if (day > daysInMonth) {
       return {
-        year,
-        month,
-        day: day - daysToRemove,
+        recurse: true,
+        params: [{ year, month, day: daysInMonth }, day - daysInMonth],
       };
-    } else {
+    }
+    if (day < 0) {
+      return {
+        recurse: true,
+        params: [{ year, month, day: 0 }, day],
+      };
+    }
+    if (day === 0 && daysToAdd === 0) {
       const prevMonth = addMonths({ year, month }, -1);
-      return addDays(
-        {
+      return {
+        recurse: false,
+        return: {
           ...prevMonth,
           day: numberOfDaysInMonth(prevMonth),
         },
-        -(daysToRemove - day),
-      );
+      };
     }
-  } else {
-    // daysToAdd > 0
-    // daysLeftInMonth can be [0, daysInMonth]
-    const daysLeftInMonth = daysInMonth - day;
-    if (daysToAdd <= daysLeftInMonth) {
-      return { year, month, day: day + daysToAdd };
+    if (daysToAdd === 0) {
+      return {
+        recurse: true,
+        params: [{ year, month, day: 0 }, day],
+      };
+    }
+
+    // daysToAdd cannot be 0
+    // day has to be 0 or [1, daysInMonth] (inclusive)
+
+    if (daysToAdd < 0) {
+      // daysToRemove is a positive number
+      const daysToRemove = -daysToAdd;
+      if (daysToRemove < day) {
+        return {
+          recurse: false,
+          return: {
+            year,
+            month,
+            day: day - daysToRemove,
+          },
+        };
+      } else {
+        const prevMonth = addMonths({ year, month }, -1);
+        return {
+          recurse: true,
+          params: [
+            {
+              ...prevMonth,
+              day: numberOfDaysInMonth(prevMonth),
+            },
+            -(daysToRemove - day),
+          ],
+        };
+      }
     } else {
-      return addDays(
-        { ...addMonths({ year, month }, 1), day: 0 },
-        daysToAdd - daysLeftInMonth,
-      );
+      // daysToAdd > 0
+      // daysLeftInMonth can be [0, daysInMonth]
+      const daysLeftInMonth = daysInMonth - day;
+      if (daysToAdd <= daysLeftInMonth) {
+        return {
+          recurse: false,
+          return: { year, month, day: day + daysToAdd },
+        };
+      } else {
+        return {
+          recurse: true,
+          params: [
+            { ...addMonths({ year, month }, 1), day: 0 },
+            daysToAdd - daysLeftInMonth,
+          ],
+        };
+      }
     }
-  }
-};
+  },
+);
 
 //
 // Low level implementations

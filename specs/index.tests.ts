@@ -63,13 +63,13 @@ test('Number of days in month', () => {
   );
 });
 
-// test('Are in order has positive diff', () => {
-//   fc.assert(
-//     fc.property(fcCalendarDate(), fcCalendarDate(), (a, b) => {
-//       const areOrdered = areInOrder(a, b);
-//       const diff = numberOfDaysBetween({ start: a, end: b });
-//       const negativeDiff = diff < 0;
-//       expect(!areOrdered).toBe(negativeDiff);
-//     }),
-//   );
-// });
+test('Are in order has positive diff', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), fcCalendarDate(), (a, b) => {
+      const areOrdered = areInOrder(a, b);
+      const diff = numberOfDaysBetween({ start: a, end: b });
+      const negativeDiff = diff < 0;
+      expect(!areOrdered).toBe(negativeDiff);
+    }),
+  );
+});

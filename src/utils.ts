@@ -40,3 +40,17 @@ export const solve = (pred: (n: number) => Order): number => {
   const range = exponentialSearch(pred);
   return binarySearch(pred, range);
 };
+
+type trampolinable<T extends unknown[], U> = (
+  ...x: T
+) => { recurse: true; params: T } | { recurse: false; return: U };
+export const trampoline = <T extends unknown[], U>(f: trampolinable<T, U>) => (
+  ...x: T
+) => {
+  let y = f(...x);
+  while (y.recurse) {
+    const { params } = y;
+    y = f(...params);
+  }
+  return y.return;
+};
