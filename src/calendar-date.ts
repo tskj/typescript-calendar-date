@@ -7,7 +7,7 @@ import {
   weekDays,
   Year,
 } from './consts';
-import { mod, solve, trampoline } from './utils';
+import { memoize, mod, solve, trampoline } from './utils';
 
 //
 // Foundations
@@ -286,7 +286,8 @@ export const numberOfDaysBetween = ({
 }): number => {
   const lteq = (a: CalendarDate, b: CalendarDate) =>
     isDateBefore(a, b) ? 'lt' : datesEqual(a, b) ? 'eq' : 'gt';
-  const n = solve((n) => lteq(addDays(a, n), b));
+  const m_addDays = memoize(addDays);
+  const n = solve((n) => lteq(m_addDays(a, n), b));
   return n;
 };
 

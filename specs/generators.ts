@@ -1,5 +1,5 @@
 import fc from 'fast-check';
-import { monthName, numberOfDaysInMonth } from '../src';
+import { dayOfWeek, monthName, numberOfDaysInMonth } from '../src';
 
 export const fcCalendarDate = () =>
   fc
@@ -15,3 +15,5 @@ export const fcCalendarMonth = () =>
 
 const fcYear = () => fc.integer(1000, 3000);
 const fcMonth = () => fc.integer(1, 12).map(monthName);
+
+export const fcWeekDay = () => fcCalendarDate().map(dayOfWeek);

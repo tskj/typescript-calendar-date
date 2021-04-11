@@ -7,8 +7,14 @@ import {
   periodOfDates,
   isLeapYear,
   areInOrder,
+  isDateBefore,
+  datesEqual,
+  startOfWeek,
+  serializeIso8601String,
+  parseIso8601String,
 } from '../src';
-import { fcCalendarDate } from './generators';
+import { fcCalendarDate, fcWeekDay } from './generators';
+import { repeat } from './utils';
 
 test('Difference in days', () => {
   fc.assert(
@@ -23,6 +29,31 @@ test('Difference in days', () => {
     ),
   );
 });
+
+test('Add days', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), fcCalendarDate(), (a, b) => {
+      const diff = numberOfDaysBetween({ start: a, end: b });
+
+      const bPrime = addDays(a, diff);
+      expect(bPrime).toEqual(b);
+
+      const aPrime = addDays(b, -diff);
+      expect(aPrime).toEqual(a);
+    }),
+  );
+});
+
+// test('Adding days sequentially', () => {
+//   fc.assert(
+//     fc.property(fcCalendarDate(), fc.integer(-100, 100), (date, n) => {
+//       const otherDate = addDays(date, n);
+//       const step = n < 0 ? -1 : 1;
+//       const otherDatePrime = repeat(Math.abs(n), (d) => addDays(d, step), date);
+//       expect(otherDate).toEqual(otherDatePrime);
+//     }),
+//   );
+// });
 
 test('Number of days in leapyears', () => {
   fc.assert(
@@ -97,3 +128,74 @@ test('Period of dates has correct number of days', () => {
     }),
   );
 });
+
+test('Ordered dates', () => {
+  fc.assert(
+    fc.property(fc.array(fcCalendarDate()), (dates) => {
+      const orderedDates = dates.sort((a, b) =>
+        isDateBefore(a, b) ? -1 : datesEqual(a, b) ? 0 : 1,
+      );
+      expect(areInOrder(...orderedDates)).toBe(true);
+    }),
+  );
+});
+
+test('Ordered ints', () => {
+  fc.assert(
+    fc.property(
+      fcCalendarDate(),
+      fc.array(fc.integer(-100, 100)),
+      (date, ints) => {
+        const orderedInts = ints.sort((a, b) => a - b);
+        const shiftDays = (n: number) => addDays(date, n);
+        const dates = orderedInts.map(shiftDays);
+        expect(areInOrder(...dates)).toBe(true);
+      },
+    ),
+  );
+});
+
+test('Start of week is in the past', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      const startOfThisWeek = startOfWeek(date);
+      expect(areInOrder(startOfThisWeek, date)).toBe(true);
+      expect(
+        numberOfDaysBetween({ start: startOfThisWeek, end: date }),
+      ).toBeLessThan(7);
+    }),
+  );
+});
+
+test('Start of week is in the past for any start of week', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), fcWeekDay(), (date, weekStart) => {
+      const startOfThisWeek = startOfWeek(date, { firstDayOfWeek: weekStart });
+      expect(areInOrder(startOfThisWeek, date)).toBe(true);
+      expect(
+        numberOfDaysBetween({ start: startOfThisWeek, end: date }),
+      ).toBeLessThan(7);
+    }),
+  );
+});
+
+test('Serialize and parse', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      const serialized = serializeIso8601String(date);
+      const parsed = parseIso8601String(serialized);
+      expect(parsed).toEqual(date);
+    }),
+  );
+});
+
+// test('Adding more than a year of days', () => {
+//   fc.assert(
+//     fc.property(fcCalendarDate(), fc.integer(), (date, n) => {
+//       const otherDate = addDays(date, n);
+//       if (Math.abs(n) >= 366) {
+//         expect(date.year !== otherDate.year).toBe(true);
+//       }
+//     }),
+//   );
+// });
