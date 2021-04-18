@@ -12,8 +12,9 @@ import {
   startOfWeek,
   serializeIso8601String,
   parseIso8601String,
+  addMonths,
 } from '../src';
-import { fcCalendarDate, fcWeekDay } from './generators';
+import { fcCalendarDate, fcCalendarMonth, fcWeekDay } from './generators';
 import { repeat } from './utils';
 
 test('Difference in days', () => {
@@ -44,16 +45,16 @@ test('Add days', () => {
   );
 });
 
-// test('Adding days sequentially', () => {
-//   fc.assert(
-//     fc.property(fcCalendarDate(), fc.integer(-100, 100), (date, n) => {
-//       const otherDate = addDays(date, n);
-//       const step = n < 0 ? -1 : 1;
-//       const otherDatePrime = repeat(Math.abs(n), (d) => addDays(d, step), date);
-//       expect(otherDate).toEqual(otherDatePrime);
-//     }),
-//   );
-// });
+test('Adding days sequentially', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), fc.integer(-100, 100), (date, n) => {
+      const otherDate = addDays(date, n);
+      const step = n < 0 ? -1 : 1;
+      const otherDatePrime = repeat(Math.abs(n), (d) => addDays(d, step), date);
+      expect(otherDate).toEqual(otherDatePrime);
+    }),
+  );
+});
 
 test('Number of days in leapyears', () => {
   fc.assert(
@@ -189,13 +190,57 @@ test('Serialize and parse', () => {
   );
 });
 
-// test('Adding more than a year of days', () => {
-//   fc.assert(
-//     fc.property(fcCalendarDate(), fc.integer(), (date, n) => {
-//       const otherDate = addDays(date, n);
-//       if (Math.abs(n) >= 366) {
-//         expect(date.year !== otherDate.year).toBe(true);
-//       }
-//     }),
-//   );
-// });
+test('Adding more than a year of days', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), fc.integer(-2000, 2000), (date, n) => {
+      const otherDate = addDays(date, n);
+      if (Math.abs(n) >= 366) {
+        expect(date.year !== otherDate.year).toBe(true);
+      }
+    }),
+  );
+});
+
+test('Associativity', () => {
+  fc.assert(
+    fc.property(
+      fcCalendarDate(),
+      fc.integer(-500 * 365, 500 * 365),
+      fc.integer(-500 * 365, 500 * 365),
+      (date, x, y) => {
+        expect(addDays(date, x + y)).toEqual(addDays(addDays(date, x), y));
+      },
+    ),
+  );
+});
+
+test('Additive identity', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      expect(addDays(date, 0)).toEqual(date);
+    }),
+  );
+});
+
+test('Subtraction identity', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      expect(numberOfDaysBetween({ start: date, end: date })).toBe(0);
+    }),
+  );
+});
+
+test('Associativity for months', () => {
+  fc.assert(
+    fc.property(
+      fcCalendarMonth(),
+      fc.integer(-500, 500),
+      fc.integer(-500, 500),
+      (month, x, y) => {
+        expect(addMonths(month, x + y)).toEqual(
+          addMonths(addMonths(month, x), y),
+        );
+      },
+    ),
+  );
+});

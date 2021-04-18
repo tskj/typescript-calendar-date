@@ -62,17 +62,3 @@ export const trampoline = <T extends unknown[], U>(
   }
   return y.return;
 };
-
-export const memoize = (f: (c: CalendarDate, n: number) => CalendarDate) => {
-  let m: Map<string, CalendarDate> = new Map();
-  return (c: CalendarDate, n: number) => {
-    const key = `${serializeIso8601String(c)}:${n}`;
-    if (m.has(key)) {
-      return m.get(key) as CalendarDate;
-    } else {
-      const value = f(c, n);
-      m.set(key, value);
-      return value;
-    }
-  };
-};
