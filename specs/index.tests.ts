@@ -13,6 +13,7 @@ import {
   serializeIso8601String,
   parseIso8601String,
   addMonths,
+  dayOfWeek,
 } from '../src';
 import { fcCalendarDate, fcCalendarMonth, fcWeekDay } from './generators';
 import { repeat } from './utils';
@@ -158,25 +159,36 @@ test('Ordered ints', () => {
 
 test('Start of week is in the past', () => {
   fc.assert(
-    fc.property(fcCalendarDate(), (date) => {
-      const startOfThisWeek = startOfWeek(date);
-      expect(areInOrder(startOfThisWeek, date)).toBe(true);
-      expect(
-        numberOfDaysBetween({ start: startOfThisWeek, end: date }),
-      ).toBeLessThan(7);
-    }),
+    fc.property(
+      fcCalendarDate().filter(({ year }) => 1900 < year && year < 2100),
+      (date) => {
+        const startOfThisWeek = startOfWeek(date);
+        expect(areInOrder(startOfThisWeek, date)).toBe(true);
+        expect(
+          numberOfDaysBetween({ start: startOfThisWeek, end: date }),
+        ).toBeLessThan(7);
+        expect(dayOfWeek(startOfThisWeek)).toBe('mon');
+      },
+    ),
   );
 });
 
 test('Start of week is in the past for any start of week', () => {
   fc.assert(
-    fc.property(fcCalendarDate(), fcWeekDay(), (date, weekStart) => {
-      const startOfThisWeek = startOfWeek(date, { firstDayOfWeek: weekStart });
-      expect(areInOrder(startOfThisWeek, date)).toBe(true);
-      expect(
-        numberOfDaysBetween({ start: startOfThisWeek, end: date }),
-      ).toBeLessThan(7);
-    }),
+    fc.property(
+      fcCalendarDate().filter(({ year }) => 1900 < year && year < 2100),
+      fcWeekDay(),
+      (date, weekStart) => {
+        const startOfThisWeek = startOfWeek(date, {
+          firstDayOfWeek: weekStart,
+        });
+        expect(areInOrder(startOfThisWeek, date)).toBe(true);
+        expect(
+          numberOfDaysBetween({ start: startOfThisWeek, end: date }),
+        ).toBeLessThan(7);
+        expect(dayOfWeek(startOfThisWeek)).toBe(weekStart);
+      },
+    ),
   );
 });
 
@@ -236,9 +248,9 @@ test('Associativity for months', () => {
       fcCalendarMonth(),
       fc.integer(-500, 500),
       fc.integer(-500, 500),
-      (month, x, y) => {
-        expect(addMonths(month, x + y)).toEqual(
-          addMonths(addMonths(month, x), y),
+      (date, x, y) => {
+        expect(addMonths(date, x + y)).toEqual(
+          addMonths(addMonths(date, x), y),
         );
       },
     ),
