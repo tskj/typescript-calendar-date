@@ -14,6 +14,7 @@ import {
   parseIso8601String,
   addMonths,
   dayOfWeek,
+  lastDateInMonth,
 } from '../src';
 import { fcCalendarDate, fcCalendarMonth, fcWeekDay } from './generators';
 import { repeat } from './utils';
@@ -254,5 +255,41 @@ test('Associativity for months', () => {
         );
       },
     ),
+  );
+});
+
+test('Adding months', () => {
+  fc.assert(
+    fc.property(
+      fcCalendarDate(),
+      fc.integer(-50 * 12, 50 * 12),
+      (date, months) => {
+        const lastMonth = addMonths(date, months);
+        const lastDate = lastDateInMonth(lastMonth);
+        const diffInDays = numberOfDaysBetween({ start: date, end: lastDate });
+
+        if (months !== 0) {
+          expect(Math.sign(diffInDays)).toBe(Math.sign(months));
+        }
+      },
+    ),
+  );
+});
+
+test('Adding zero months', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      const lastMonth = addMonths(date, 0);
+      const lastDate = lastDateInMonth(lastMonth);
+      const diffInDays = numberOfDaysBetween({ start: date, end: lastDate });
+
+      if (datesEqual(date, lastDateInMonth(date))) {
+        expect(diffInDays).toBe(0);
+      } else {
+        expect(diffInDays).toBeGreaterThan(0);
+      }
+
+      expect(diffInDays).toBeLessThan(31);
+    }),
   );
 });
