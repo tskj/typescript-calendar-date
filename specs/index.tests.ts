@@ -122,7 +122,7 @@ test('Period of dates has correct number of days', () => {
   fc.assert(
     fc.property(fcCalendarDate(), fcCalendarDate(), (a, b) => {
       const daysBetween = numberOfDaysBetween({ start: a, end: b }) + 1;
-      if (Math.abs(daysBetween) > 2000) {
+      if (Math.abs(daysBetween) > 1000) {
         return;
       }
       const allDaysInPeriod = periodOfDates(a, b);
