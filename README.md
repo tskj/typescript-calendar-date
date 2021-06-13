@@ -387,3 +387,54 @@ Used to produce the number of the month based on the three letter abbreviation. 
 ```typescript
 const january = monthNumber('jan'); // 1
 ```
+
+-------------------
+
+### parseIso8601String
+
+```typescript
+const parseIso8601String: (date: string): CalendarDate;
+```
+
+Parse a string of the form `YYYY-MM-DD` into a `CalendarDate`. This is especially useful when receiving data from an API where dates are represented as strings. Note that it needs to be specifically formatted as ISO 8601 strings, so `2` instead of `02` to represent February is not permitted.
+
+This matches the start of the string; if there is more data, for instance timezone data in the form of `2020-02-04T00:00Z`, this is ignored. Only the literal first date part is considered.
+
+```typescript
+const calendarDate = parseIso8601String('2020-02-24'); // { year: 2020, month: 'feb', day: 24 }
+```
+
+If there are too many days in the month, or for some other reason the string cannot be parsed as a valid ISO 8601 string, the function throws an error message explaining what went wrong.
+
+-------------------
+
+### serializeIso8601String
+
+```typescript
+const serializeIso8601String: (date: CalendarDate) => string;
+```
+
+Used to serialize a `CalendarDate` to a proper ISO 8601 string. Numbers less than `10` will be start-padded with `0` to fit the `YYYY-MM-DD` format.
+
+```typescript
+const dateString = serializeIso8601String({ year: 2020, month: 'feb', day: 24 }); // "2020-02-24"
+```
+
+-------------------
+
+### calendarDateFromJsDateObject
+
+```typescript
+const calendarDateFromJsDateObject: (jsDate: Date) => CalendarDate;
+```
+
+This function is maybe useful if you already have a JavaScript `Date` object. However, this should usually not be necessary. For instance, remember that all data you receive from the backend or otherwise through JSON consist entirely of primitive values, i.e. typically strings of the form `"2020-01-01"` to represent dates. In this case it is much better to parse this string directly using `parseIso8601String`! And in general you should avoid using `Date` objects as much as possible.
+
+One legitimate usecase might be an easy way to generate a `CalendarDate` representing today's date (as observed by who ever runs the code at that moment in time), as shown in the following example.
+
+```typescript
+const now = new Date();
+const todaysCalendarDate = calendarDateFromJsDateObject(now);
+```
+
+This works, but beware: this only works sofar the client running the code (be that a web browser, or a server in some data center) has their clocks configured correctly, and even then you are subject to all sorts of timezone issues, especially around daylight saving and other anomalies. Please use another means of determening the exact date if accuracy matters to you, and in any case, consider it only an approximation of the actual date.

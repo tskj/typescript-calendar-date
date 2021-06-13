@@ -21,4 +21,8 @@ export {
   isLeapYear,
 } from './calendar-date';
 export { monthName, monthNumber } from './consts';
-export { parseIso8601String, serializeIso8601String } from './io';
+export {
+  parseIso8601String,
+  serializeIso8601String,
+  calendarDateFromJsDateObject,
+} from './io';

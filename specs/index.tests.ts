@@ -15,8 +15,16 @@ import {
   addMonths,
   dayOfWeek,
   lastDateInMonth,
+  monthNumber,
+  calendarDateFromJsDateObject,
+  monthName,
 } from '../src';
-import { fcCalendarDate, fcCalendarMonth, fcWeekDay } from './generators';
+import {
+  fcCalendarDate,
+  fcCalendarMonth,
+  fcWeekDay,
+  fcYear,
+} from './generators';
 import { repeat } from './utils';
 
 test('Difference in days', () => {
@@ -203,6 +211,81 @@ test('Serialize and parse', () => {
   );
 });
 
+test('Serialize', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      const serialized = serializeIso8601String(date);
+
+      expect(serialized.length).toBe(10);
+
+      const yyyymmdd = /^\d{4}-\d{2}-\d{2}$/;
+      expect(yyyymmdd.test(serialized)).toBe(true);
+
+      const digitsOrDash = /^[0-9\-]*$/;
+      expect(digitsOrDash.test(serialized)).toBe(true);
+    }),
+  );
+});
+
+test('Parse', () => {
+  fc.assert(
+    fc.property(
+      fcYear(),
+      fc.integer(0, 9),
+      fc.integer(0, 9),
+      fc.integer(0, 9),
+      fc.integer(0, 9),
+      (yearNumber, monthDigit_1, monthDigit_2, dayDigit_1, dayDigit_2) => {
+        const mm = `${monthDigit_1}${monthDigit_2}`;
+        const dd = `${dayDigit_1}${dayDigit_2}`;
+
+        const yyyymmdd = `${yearNumber}-${mm}-${dd}`;
+        const parse = () => parseIso8601String(yyyymmdd);
+
+        if (yearNumber < 1000 || yearNumber > 9999) {
+          // Won't be zero-padded
+          expect(parse).toThrow();
+          return;
+        }
+
+        const month = parseInt(mm, 10);
+        const day = parseInt(dd, 10);
+
+        if (month === 0 || day === 0 || month > 12 || day > 31) {
+          expect(parse).toThrow();
+          return;
+        }
+
+        if (day <= 28) {
+          const calendarDate = {
+            year: yearNumber,
+            month: monthName(month),
+            day,
+          };
+          expect(parseIso8601String(yyyymmdd)).toEqual(calendarDate);
+          expect(parseIso8601String(yyyymmdd + 'T00:00Z')).toEqual(
+            calendarDate,
+          );
+        }
+
+        if (month < 10 || day < 10) {
+          // One of these won't be zero padded, so we expect a failure
+          const yyyymd = `${yearNumber}-${month}-${day}`;
+          expect(() => parseIso8601String(yyyymd)).toThrow();
+        }
+
+        // Here we may or may not be legit, depending on the number of days in this month
+        // so we test some gibberis for good measure
+        expect(() => parseIso8601String('1' + yyyymmdd)).toThrow();
+        expect(() =>
+          parseIso8601String(yyyymmdd.split('').reverse().join()),
+        ).toThrow();
+        expect(() => parseIso8601String(yyyymmdd.replace('-', '/'))).toThrow();
+      },
+    ),
+  );
+});
+
 test('Adding more than a year of days', () => {
   fc.assert(
     fc.property(fcCalendarDate(), fc.integer(-2000, 2000), (date, n) => {
@@ -290,6 +373,20 @@ test('Adding zero months', () => {
       }
 
       expect(diffInDays).toBeLessThan(31);
+    }),
+  );
+});
+
+test('Convert from js Date object', () => {
+  fc.assert(
+    fc.property(fcCalendarDate(), (date) => {
+      const { year, month, day } = date;
+      const monthIndex = monthNumber(month) - 1;
+
+      const jsDate = new Date(year, monthIndex, day);
+      const newDate = calendarDateFromJsDateObject(jsDate);
+
+      expect(date).toEqual(newDate);
     }),
   );
 });

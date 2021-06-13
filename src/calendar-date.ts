@@ -91,11 +91,8 @@ export const addMonths = (
  * Returns a new `CalendarDate` object, `daysToAdd` (integer) number of days in the future (or past if negative).
  * Always retunrs a new (instance of) an object, even if you try to add `0` days.
  */
-export const addDays: (
-  date: CalendarDate,
-  n: number,
-) => CalendarDate = trampoline(
-  ({ year, month, day }: CalendarDate, daysToAdd: number) => {
+export const addDays: (date: CalendarDate, n: number) => CalendarDate =
+  trampoline(({ year, month, day }: CalendarDate, daysToAdd: number) => {
     const daysInMonth = numberOfDaysInMonth({ year, month });
     if (day > daysInMonth) {
       return {
@@ -173,8 +170,7 @@ export const addDays: (
         };
       }
     }
-  },
-);
+  });
 
 //
 // Low level implementations
